@@ -13,7 +13,7 @@ return [
 
     /**
      * (string) Allows you to specify which profile to us
-     * 
+     *
      * Note: Specifying "profile" will cause the "credentials" key to be ignored.
      */
     'profile' => env('AWS_TIMESTREAM_PROFILE'),
