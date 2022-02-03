@@ -2,10 +2,8 @@
 
 namespace Ringierimu\LaravelAwsTimestream;
 
-use Aws\Credentials\Credentials;
 use Illuminate\Support\ServiceProvider;
-use Aws\TimestreamQuery\TimestreamQueryClient;
-use Aws\TimestreamWrite\TimestreamWriteClient;
+use Ringierimu\LaravelAwsTimestream\TimestreamManager;
 
 class TimestreamServiceProvider extends ServiceProvider
 {
@@ -18,26 +16,12 @@ class TimestreamServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'timestream');
 
-        $this->app->singleton(TimestreamQueryClient::class, function ($app) {
-            return new TimestreamQueryClient([
-                'version' => 'latest',
-                'region' => 'eu-west-1',
-                'credentials' => new Credentials(
-                    config('timestream.aws-timestream.key'),
-                    config('timestream.aws-timestream.secret')
-                ),
-            ]);
-        });
-
-        $this->app->singleton(TimestreamWriteClient::class, function ($app) {
-            return new TimestreamWriteClient([
-                'version' => 'latest',
-                'region' => 'eu-west-1',
-                'credentials' => new Credentials(
-                    config('timestream.aws-timestream.key'),
-                    config('timestream.aws-timestream.secret')
-                ),
-            ]);
+        $this->app->singleton(TimestreamManager::class, function ($app) {
+            return new TimestreamManager(
+                config('timestream.key'),
+                config('timestream.secret'),
+                config('timestream.profile'),
+            );
         });
     }
 
@@ -62,5 +46,4 @@ class TimestreamServiceProvider extends ServiceProvider
             ], 'timestream-config');
         }
     }
-
 }

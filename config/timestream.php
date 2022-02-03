@@ -12,6 +12,13 @@ return [
     'secret' => env('AWS_TIMESTREAM_SECRET'),
 
     /**
+     * (string) Allows you to specify which profile to us
+     * 
+     * Note: Specifying "profile" will cause the "credentials" key to be ignored.
+     */
+    'profile' => env('AWS_TIMESTREAM_PROFILE'),
+
+    /**
      * Databse name
      */
     'database' => env('AWS_TIMESTREAM_DATABASE'),
@@ -31,8 +38,8 @@ return [
         'default' => null,
 
         /**
-         * To handle multiple tables acess, you can map them below and access them. 
-         * The `value` of the `key` should represent the table name that you want to access 
+         * To handle multiple tables acess, you can map them below and access them.
+         * The `value` of the `key` should represent the table name that you want to access
          * and they `key`  can be anything meaningful.
          * eg. ['listing' => 'listing-kpi', ['github' => 'ingestion-github']]
          */
