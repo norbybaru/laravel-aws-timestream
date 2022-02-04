@@ -17,7 +17,6 @@ use Ringierimu\LaravelAwsTimestream\Dto\TimestreamWriterDto;
 use Ringierimu\LaravelAwsTimestream\Exception\FailTimestreamQueryException;
 use Ringierimu\LaravelAwsTimestream\Exception\FailTimestreamWriterException;
 use Ringierimu\LaravelAwsTimestream\Exception\UnknownTimestreamDataTypeException;
-use Ringierimu\LaravelAwsTimestream\Support\TimestreamPayloadBuilder;
 
 class TimestreamService
 {
