@@ -2,6 +2,8 @@
 
 namespace Ringierimu\LaravelAwsTimestream\Dto;
 
+use Ringierimu\LaravelAwsTimestream\Query\TimestreamQuery;
+
 class TimestreamReaderDto extends AbstractTimestreamDto
 {
     public function __construct(protected TimestreamQuery $query, string $forTable = null)

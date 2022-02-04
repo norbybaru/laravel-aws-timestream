@@ -36,9 +36,9 @@ class TimestreamService
         $this->ingest($timestreamWriter->toArray());
     }
 
-    public function write(TimestreamPayloadBuilder $data): void
+    public function write(TimestreamWriterDto $timestreamReader): void
     {
-        $this->ingest($data->toArray());
+        $this->ingest($timestreamReader->toArray());
     }
 
     private function ingest(array $payload): void
