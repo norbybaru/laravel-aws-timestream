@@ -1,2 +1,3 @@
 *.lock
+/.phpunit.result.cache
 /vendor
