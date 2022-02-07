@@ -3,6 +3,7 @@
 namespace Ringierimu\AwsTimestream\Query;
 
 use Illuminate\Support\Str;
+use Ringierimu\AwsTimestream\Query\TimestreamQuery;
 
 class TimestreamQueryBuilder extends TimestreamQuery
 {

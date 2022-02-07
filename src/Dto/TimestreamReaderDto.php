@@ -3,6 +3,7 @@
 namespace Ringierimu\AwsTimestream\Dto;
 
 use Ringierimu\AwsTimestream\Query\TimestreamQuery;
+use Ringierimu\AwsTimestream\Dto\AbstractTimestreamDto;
 
 class TimestreamReaderDto extends AbstractTimestreamDto
 {
