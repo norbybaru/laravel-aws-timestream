@@ -28,7 +28,7 @@
     "require": {
         "php": "^8.0",
         "illuminate/support": "^8.0",
-        "aws/aws-sdk-php": "^3.1"
+        "aws/aws-sdk-php": "^3.209"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
