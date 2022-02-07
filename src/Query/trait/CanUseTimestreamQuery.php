@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Trait;
+namespace Ringierimu\LaravelAwsTimestream\Query\Trait;
 
 use Closure;
 use Illuminate\Support\Str;
