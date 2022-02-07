@@ -2,8 +2,6 @@
 
 namespace Ringierimu\AwsTimestream\Dto;
 
-use Ringierimu\AwsTimestream\Dto\AbstractTimestreamDto;
-
 class TimestreamWriterDto extends AbstractTimestreamDto
 {
     public function __construct(protected array $records, protected array $commonAttributes = [], string $forTable = null)
