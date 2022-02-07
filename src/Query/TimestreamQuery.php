@@ -3,8 +3,8 @@
 namespace Ringierimu\LaravelAwsTimestream\Query;
 
 use Illuminate\Support\Str;
-use Ringierimu\LaravelAwsTimestream\Trait\CanUseTimestreamQuery;
 use Ringierimu\LaravelAwsTimestream\Contract\TimestreamQueryContract;
+use Ringierimu\LaravelAwsTimestream\Trait\CanUseTimestreamQuery;
 
 abstract class TimestreamQuery implements TimestreamQueryContract
 {

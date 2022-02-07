@@ -2,11 +2,9 @@
 
 namespace Ringierimu\LaravelAwsTimestream\Tests\Feature;
 
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Config;
-use Ringierimu\LaravelAwsTimestream\Tests\TestCase;
 use Ringierimu\LaravelAwsTimestream\Dto\TimestreamReaderDto;
 use Ringierimu\LaravelAwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\LaravelAwsTimestream\Tests\TestCase;
 
 class ReaderUnitTest extends TestCase
 {
@@ -29,7 +27,7 @@ class ReaderUnitTest extends TestCase
             ->whereAgo('time', '24h', '>=')
             ->whereNotIn('measure_value::varchar', ['reviewer', 'open', 'closed'])
             ->orderBy('time', 'desc');
-        
+
         $this->assertInstanceOf(TimestreamQueryBuilder::class, $queryBuilder);
         $this->assertIsString($queryBuilder->getSql());
         $this->assertEquals($queryBuilder->getSql(), $sql);
@@ -57,7 +55,7 @@ class ReaderUnitTest extends TestCase
             ->orderBy('time', 'desc');
 
         $tableSource = 'test';
-        $dto = TimestreamReaderDto::make($queryBuilder,$tableSource);
+        $dto = TimestreamReaderDto::make($queryBuilder, $tableSource);
 
         $database = config('timestream.database');
         $table = config("timestream.tables.sources.{$tableSource}");

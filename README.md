@@ -1,5 +1,7 @@
 # Laravel AWS Timestream
 
+[![Tests](https://github.com/RingierIMU/laravel-aws-timestream/actions/workflows/run-tests.yml/badge.svg)](https://github.com/RingierIMU/laravel-aws-timestream/actions/workflows/run-tests.yml)
+
 AWS Timestream is a fast, scalable, and serverless time series database service.
 This package is an opinionated implementation to query timestream and ingest data into timestream.
 

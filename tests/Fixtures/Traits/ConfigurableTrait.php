@@ -11,7 +11,7 @@ trait ConfigurableTrait
             'tables' => [
                 'default' => 'default',
                 'sources' => [
-                    'test' => 'default'
+                    'test' => 'default',
                 ],
             ],
         ];
