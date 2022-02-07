@@ -1,8 +1,8 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Tests\Feature;
+namespace Ringierimu\AwsTimestream\Tests\Feature;
 
-use Ringierimu\LaravelAwsTimestream\Tests\TestCase;
+use Ringierimu\AwsTimestream\Tests\TestCase;
 
 class ReaderFeatureTest extends TestCase
 {

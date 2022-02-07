@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Dto;
+namespace Ringierimu\AwsTimestream\Dto;
 
 abstract class AbstractTimestreamDto
 {

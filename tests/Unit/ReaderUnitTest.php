@@ -1,10 +1,10 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Tests\Feature;
+namespace Ringierimu\AwsTimestream\Tests\Feature;
 
-use Ringierimu\LaravelAwsTimestream\Dto\TimestreamReaderDto;
-use Ringierimu\LaravelAwsTimestream\Query\TimestreamQueryBuilder;
-use Ringierimu\LaravelAwsTimestream\Tests\TestCase;
+use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
+use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\AwsTimestream\Tests\TestCase;
 
 class ReaderUnitTest extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream;
+namespace Ringierimu\AwsTimestream;
 
 use Aws\Credentials\Credentials;
 use Aws\TimestreamQuery\TimestreamQueryClient;

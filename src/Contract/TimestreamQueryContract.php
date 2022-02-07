@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Contract;
+namespace Ringierimu\AwsTimestream\Contract;
 
 use Closure;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream;
+namespace Ringierimu\AwsTimestream;
 
 use Aws\Result;
 use Aws\TimestreamQuery\Exception\TimestreamQueryException;
@@ -12,11 +12,11 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Ringierimu\LaravelAwsTimestream\Dto\TimestreamReaderDto;
-use Ringierimu\LaravelAwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\LaravelAwsTimestream\Exception\FailTimestreamQueryException;
-use Ringierimu\LaravelAwsTimestream\Exception\FailTimestreamWriterException;
-use Ringierimu\LaravelAwsTimestream\Exception\UnknownTimestreamDataTypeException;
+use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
+use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
+use Ringierimu\AwsTimestream\Exception\FailTimestreamQueryException;
+use Ringierimu\AwsTimestream\Exception\FailTimestreamWriterException;
+use Ringierimu\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
 
 class TimestreamService
 {

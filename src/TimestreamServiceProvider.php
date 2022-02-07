@@ -1,10 +1,10 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream;
+namespace Ringierimu\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
-use Ringierimu\LaravelAwsTimestream\Contract\TimestreamQueryContract;
-use Ringierimu\LaravelAwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\AwsTimestream\Contract\TimestreamQueryContract;
+use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
 
 class TimestreamServiceProvider extends ServiceProvider
 {

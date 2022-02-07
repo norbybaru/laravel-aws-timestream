@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Support;
+namespace Ringierimu\AwsTimestream\Support;
 
 use Illuminate\Support\Carbon;
 

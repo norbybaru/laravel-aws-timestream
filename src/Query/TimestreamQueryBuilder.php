@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Query;
+namespace Ringierimu\AwsTimestream\Query;
 
 use Illuminate\Support\Str;
 

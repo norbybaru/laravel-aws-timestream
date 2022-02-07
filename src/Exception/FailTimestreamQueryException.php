@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Exception;
+namespace Ringierimu\AwsTimestream\Exception;
 
 class FailTimestreamQueryException extends TimestreamException
 {

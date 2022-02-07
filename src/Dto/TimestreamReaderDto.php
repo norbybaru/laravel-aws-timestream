@@ -1,8 +1,8 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Dto;
+namespace Ringierimu\AwsTimestream\Dto;
 
-use Ringierimu\LaravelAwsTimestream\Query\TimestreamQuery;
+use Ringierimu\AwsTimestream\Query\TimestreamQuery;
 
 class TimestreamReaderDto extends AbstractTimestreamDto
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Tests;
+namespace Ringierimu\AwsTimestream\Tests;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Ringierimu\LaravelAwsTimestream\Tests\Fixtures\Traits\ConfigurableTrait;
-use Ringierimu\LaravelAwsTimestream\TimestreamServiceProvider;
+use Ringierimu\AwsTimestream\Tests\Fixtures\Traits\ConfigurableTrait;
+use Ringierimu\AwsTimestream\TimestreamServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
 {

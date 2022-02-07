@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\LaravelAwsTimestream\Tests\Fixtures\Traits;
+namespace Ringierimu\AwsTimestream\Tests\Fixtures\Traits;
 
 trait ConfigurableTrait
 {

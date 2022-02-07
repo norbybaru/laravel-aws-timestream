@@ -5,18 +5,18 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Ringierimu\\LaravelAwsTimestream\\TimestreamServiceProvider"
+                "Ringierimu\\AwsTimestream\\TimestreamServiceProvider"
             ]
         }
     },
     "autoload": {
         "psr-4": {
-            "Ringierimu\\LaravelAwsTimestream\\": "src/"
+            "Ringierimu\\AwsTimestream\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ringierimu\\LaravelAwsTimestream\\Tests\\": "tests/"
+            "Ringierimu\\AwsTimestream\\Tests\\": "tests/"
         }
     },
     "authors": [
