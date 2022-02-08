@@ -15,6 +15,7 @@ abstract class TestCase extends OrchestraTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->setUpFaker();
     }
 
     /**

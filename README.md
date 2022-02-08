@@ -132,40 +132,42 @@ use Ringierimu\AwsTimestream\Support\TimestreamPayloadBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {
-    $metrics[] = [
-        'measure_name' => 'cpu_usage',
-        'measure_value' => 80,
-        'time' => Carbon::now(),
-        'dimensions' => [
-            'ref' => 'ref_1',
+    $metrics = [
+        [
+            'measure_name' => 'cpu_usage',
+            'measure_value' => 80,
+            'time' => Carbon::now(),
+            'dimensions' => [
+                'ref' => 'ref_1',
+            ],
         ],
-    ];
-
-    $metrics[] = [
-        'measure_name' => 'memory_usage',
-        'measure_value' => 20,
-        'time' => Carbon::now(),
-        'dimensions' => [
-            'ref' => 'ref_2',
-        ],
+        [
+            'measure_name' => 'memory_usage',
+            'measure_value' => 20,
+            'time' => Carbon::now(),
+            'dimensions' => [
+                'ref' => 'ref_2',
+            ],
+        ]
     ];
 
     $commonAttributes['device_name'] = 'device_1';
     $commonAttributes['mac_address'] = 'randomstring';
 
-    collect($metrics)->map(function (metric) {
+    collect($metrics)->map(function ($metric) {
         return TimestreamPayloadBuilder::make(
             $metric['measure_name'],
             $metric['measure_value'],
             $metric['time'],
             'VARCHAR',
-            $metrics['dimensions'],
+            $metric['dimensions'],
         )
         ->toArray();
-    })
+    });
 
-    $timestreamWriter = TimestreamWriterDto::make($metrics, $commonAttributes)
-        ->forTable('table-name');
+    $common = TimestreamPayloadBuilder::buildCommonAttributes($commonAttributes);
+
+    $timestreamWriter = TimestreamWriterDto::make($metrics, $common, 'table-name');
     return $timestreamService->write($timestreamWriter);
 }
 ```

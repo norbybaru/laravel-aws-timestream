@@ -73,6 +73,24 @@ class TimestreamPayloadBuilder
         return $this;
     }
 
+    public static function buildCommonAttributes(array $attributes): array
+    {
+        $metrics = collect($attributes)
+            ->map(function ($value, $key) {
+                return [
+                    'DimensionValueType' => 'VARCHAR',
+                    'Name' => $key,
+                    'Value' => $value,
+                ];
+            })
+            ->values()
+            ->all();
+
+        return [
+            'Dimensions' => $metrics,
+        ];
+    }
+
     public function toArray(): array
     {
         return [
