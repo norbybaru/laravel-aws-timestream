@@ -3,18 +3,11 @@
 namespace Ringierimu\AwsTimestream\Trait;
 
 use Closure;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait CanUseTimestreamQuery
 {
-    private string $queryString = '';
-    private string $fromQuery = '';
-    private string $whereQuery = '';
-    private string $selectStatement = '';
-    private string $orderByQuery = '';
-    private string $groupByQuery = '';
-    private array $withQueries = [];
-
     public function getDatabase(): ?string
     {
         return $this->database;
@@ -145,7 +138,7 @@ trait CanUseTimestreamQuery
         return $this->where($column, $value, $operator);
     }
 
-    public function whereIn(string $column, array|\Closure $values, string $operator = null, string $boolean = 'and'): self
+    public function whereIn(string $column, array|\Closure $values, string $boolean = 'and', $not = false): self
     {
         if (empty($values)) {
             return $this;
@@ -161,7 +154,7 @@ trait CanUseTimestreamQuery
             );
         }
 
-        $operator = trim(mb_strtoupper($operator) . ' IN');
+        $operator = $not ? 'NOT IN' : 'IN';
         $query = $query
             ->append(
                 sprintf('%s %s (', $column, $operator)
@@ -192,9 +185,86 @@ trait CanUseTimestreamQuery
         return $this;
     }
 
-    public function whereNotIn(string $column, array|\Closure $values): self
+    public function whereNotIn(string $column, array|\Closure $values, string $boolean = 'and'): self
     {
-        return $this->whereIn($column, $values, 'not');
+        return $this->whereIn($column, $values, $boolean, true);
+    }
+
+    public function whereBetween(string $column, array $values, $boolean = 'and', $not = false): self
+    {
+        if (empty($values)) {
+            return $this;
+        }
+
+        $query = Str::of($this->whereQuery);
+
+        if ($query->length() == 0) {
+            $query = $query->append('WHERE ');
+        } else {
+            $query = $query->append(
+                sprintf(' %s ', mb_strtoupper($boolean))
+            );
+        }
+
+        $type = 'BETWEEN';
+        $operator = $not ? 'NOT ' : '';
+        $operator .= $type;
+        $query = $query
+            ->append(
+                sprintf('%s %s ', $column, $operator)
+            );
+
+        [$firstKey, $secondKey] = array_slice(Arr::flatten($values), 0, 2);
+
+        $this->whereQuery = Str::of($query)
+            ->append(sprintf("%s and %s", $firstKey, $secondKey));
+
+        return $this;
+    }
+
+    public function whereNotBetween(string $column, array $values, $boolean = 'and'): self
+    {
+        return $this->whereBetween($column, $values, $boolean, true);
+    }
+
+    public function whereNull(string|array $columns, $boolean = 'and', $not = false): self
+    {
+        $type = 'NULL';
+
+        $operator = $not ? 'IS NOT ' : 'IS ';
+        $operator .= $type;
+
+        if (empty($columns)) {
+            return $this;
+        }
+
+        $query = Str::of($this->whereQuery);
+
+        if ($query->length() == 0) {
+            $query = $query->append('WHERE ');
+        } else {
+            $query = $query->append(
+                sprintf(' %s ', mb_strtoupper($boolean))
+            );
+        }
+
+        $counter = 0;
+        foreach (Arr::wrap($columns) as $column) {
+            $counter++;
+            $query = $query->append(sprintf('%s %s', $column, $operator));
+            if ($counter < count(Arr::wrap($columns))) {
+                $query = $query->append(sprintf(' %s ', mb_strtoupper($boolean)));
+            }
+        }
+
+        $this->whereQuery = Str::of($query);
+
+        return $this;
+    }
+
+    public function whereNotNull(string|array $columns, $boolean = 'and'): self
+    {
+        return $this->whereNull($columns, $boolean, true);
     }
 
     public function limitBy(string $limit): self

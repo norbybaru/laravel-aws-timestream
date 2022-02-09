@@ -30,9 +30,17 @@ interface TimestreamQueryContract
 
     public function andWhere(string $column, $value, string $operator = '='): self;
 
-    public function whereIn(string $column, array|Closure $values, string $operator = null, string $boolean = 'and'): self;
+    public function whereIn(string $column, array|Closure $values, string $boolean = 'and', $not = false): self;
 
-    public function whereNotIn(string $column, array|Closure $values): self;
+    public function whereNotIn(string $column, array|Closure $values, string $boolean = 'and'): self;
+
+    public function whereBetween(string $column, array $values, $boolean = 'and', $not = false): self;
+
+    public function whereNotBetween(string $column, array $values, $boolean = 'and'): self;
+
+    public function whereNull(string|array $columns, $boolean = 'and', $not = false): self;
+
+    public function whereNotNull(string|array $columns, $boolean = 'and'): self;
 
     public function limitBy(string $limit): self;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests\Feature;
+namespace Ringierimu\AwsTimestream\Tests\Unit;
 
 use Illuminate\Support\Carbon;
 use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;

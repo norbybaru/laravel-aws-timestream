@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests\Feature;
+namespace Ringierimu\AwsTimestream\Tests\Unit;
 
 use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
 use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;

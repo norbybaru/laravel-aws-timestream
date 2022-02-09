@@ -10,6 +10,14 @@ abstract class TimestreamQuery implements TimestreamQueryContract
 {
     use CanUseTimestreamQuery;
 
+    private string $queryString = '';
+    private string $fromQuery = '';
+    private string $whereQuery = '';
+    private string $selectStatement = '';
+    private string $orderByQuery = '';
+    private string $groupByQuery = '';
+    private array $withQueries = [];
+
     public function getSql(): string
     {
         return $this->getQueryString();
