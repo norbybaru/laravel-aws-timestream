@@ -1,32 +1,21 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Support;
+namespace Ringierimu\AwsTimestream\Builder;
 
 use Illuminate\Support\Carbon;
+use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
 
-class TimestreamPayloadBuilder
+class PayloadBuilder implements PayloadBuilderContract
 {
-    public array $dimensions = [];
-
-    public array $measures = [];
-
-    public string $measureName;
-
-    public $measureValue;
-
-    public string $measureValueType;
-
-    public Carbon $time;
+    protected array $dimensions;
 
     public function __construct(
-        string $measureName,
-        $measureValue,
-        Carbon $time,
-        string $measureValueType = 'DOUBLE',
+        protected string $measureName,
+        protected $measureValue,
+        protected Carbon $time,
+        protected string $measureValueType = 'DOUBLE',
         array $dimensions = []
     ) {
-        $this->buildMeasure($measureName, $measureValue, $time, $measureValueType);
-
         if ($dimensions) {
             collect($dimensions)->each(fn ($value, $key) => $this->buildDimensions($key, $value));
         }
@@ -42,35 +31,12 @@ class TimestreamPayloadBuilder
         return new static($measureName, $measureValue, $time, $measureValueType, $dimensions);
     }
 
-    private function buildMeasure(
-        string $name,
-        $value,
-        Carbon $timestamp,
-        string $measureValueType = 'DOUBLE'
-    ): self {
-        $this->measureName = $name;
-        $this->measureValue = $value;
-        $this->measureValueType = ucwords($measureValueType);
-        $this->time = $timestamp;
-
-        $this->measures = [
-            'MeasureName' => $this->measureName,
-            'MeasureValue' => $this->measureValue,
-            'MeasureValueType' => ucwords($this->measureValueType),
-            'Time' => $this->time->getTimestamp(),
-        ];
-
-        return $this;
-    }
-
-    private function buildDimensions(string $name, $value): self
+    private function buildDimensions(string $name, $value)
     {
         $this->dimensions[] = [
             'Name' => $name,
             'Value' => (string) $value,
         ];
-
-        return $this;
     }
 
     public static function buildCommonAttributes(array $attributes): array

@@ -3,9 +3,10 @@
 namespace Ringierimu\AwsTimestream\Tests\Unit;
 
 use Illuminate\Support\Carbon;
+use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
 use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\Support\TimestreamPayloadBuilder;
 use Ringierimu\AwsTimestream\Tests\TestCase;
+use Ringierimu\AwsTimestream\TimestreamBuilder;
 
 class WriterUnitTest extends TestCase
 {
@@ -13,7 +14,7 @@ class WriterUnitTest extends TestCase
     {
         $metrics = $this->generateMetrics();
 
-        $payload = TimestreamPayloadBuilder::make(
+        $payload = TimestreamBuilder::payload(
             $metrics['measure_name'],
             $metrics['measure_value'],
             $metrics['time'],
@@ -21,14 +22,14 @@ class WriterUnitTest extends TestCase
             $metrics['dimensions']
         );
 
-        $this->assertInstanceOf(TimestreamPayloadBuilder::class, $payload);
+        $this->assertInstanceOf(PayloadBuilderContract::class, $payload);
     }
 
     public function test_it_should_return_correct_payload_builder_structure()
     {
         $metrics = $this->generateMetrics();
 
-        $payload = TimestreamPayloadBuilder::make(
+        $payload = TimestreamBuilder::payload(
             $metrics['measure_name'],
             $metrics['measure_value'],
             $metrics['time'],
@@ -48,7 +49,7 @@ class WriterUnitTest extends TestCase
     {
         $metrics = $this->generateMetrics();
 
-        $payload = TimestreamPayloadBuilder::make(
+        $payload = TimestreamBuilder::payload(
             $metrics['measure_name'],
             $metrics['measure_value'],
             $metrics['time'],
@@ -67,7 +68,7 @@ class WriterUnitTest extends TestCase
     {
         $metrics = $this->generateMetrics();
 
-        $payload = TimestreamPayloadBuilder::make(
+        $payload = TimestreamBuilder::payload(
             $metrics['measure_name'],
             $metrics['measure_value'],
             $metrics['time'],
@@ -108,10 +109,10 @@ class WriterUnitTest extends TestCase
         $commonAttributes['device_name'] = $this->faker->name;
         $commonAttributes['mac_address'] = $this->faker->macAddress;
 
-        $common = TimestreamPayloadBuilder::buildCommonAttributes($commonAttributes);
+        $common = TimestreamBuilder::commonAttributes($commonAttributes);
 
         collect($metrics)->map(function ($metric) {
-            return TimestreamPayloadBuilder::make(
+            return TimestreamBuilder::payload(
                 $metric['measure_name'],
                 $metric['measure_value'],
                 $metric['time'],
@@ -137,7 +138,7 @@ class WriterUnitTest extends TestCase
     {
         $metrics = $this->generateMetrics();
 
-        $payload = TimestreamPayloadBuilder::make(
+        $payload = TimestreamBuilder::payload(
             $metrics['measure_name'],
             $metrics['measure_value'],
             $metrics['time'],

@@ -2,15 +2,16 @@
 
 namespace Ringierimu\AwsTimestream\Tests\Unit;
 
+use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
 use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
-use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
 use Ringierimu\AwsTimestream\Tests\TestCase;
+use Ringierimu\AwsTimestream\TimestreamBuilder;
 
 class ReaderUnitTest extends TestCase
 {
     public function test_reader_dto_should_return_correct_structure()
     {
-        $queryBuilder = TimestreamQueryBuilder::query();
+        $queryBuilder = TimestreamBuilder::query();
         $dto = TimestreamReaderDto::make($queryBuilder, 'test');
 
         $this->assertInstanceOf(TimestreamReaderDto::class, $dto);
@@ -21,21 +22,21 @@ class ReaderUnitTest extends TestCase
     public function test_query_builder_should_return_query_string()
     {
         $sql = "SELECT * FROM \"database-name\".\"table-name\" WHERE time >= ago(24h) AND measure_value::varchar NOT IN ('reviewer','open','closed') ORDER BY time desc";
-        $queryBuilder = TimestreamQueryBuilder::query()
+        $queryBuilder = TimestreamBuilder::query()
             ->select('*')
             ->from("database-name", 'table-name')
             ->whereAgo('time', '24h', '>=')
             ->whereNotIn('measure_value::varchar', ['reviewer', 'open', 'closed'])
             ->orderBy('time', 'desc');
 
-        $this->assertInstanceOf(TimestreamQueryBuilder::class, $queryBuilder);
+        $this->assertInstanceOf(QueryBuilderContract::class, $queryBuilder);
         $this->assertIsString($queryBuilder->getSql());
         $this->assertEquals($queryBuilder->getSql(), $sql);
     }
 
     public function test_reader_dto_should_return_correct_query_string_from_query_builder()
     {
-        $queryBuilder = TimestreamQueryBuilder::query()
+        $queryBuilder = TimestreamBuilder::query()
             ->select('*')
             ->from("database-name", 'table-name')
             ->whereAgo('time', '24h', '>=')
@@ -48,7 +49,7 @@ class ReaderUnitTest extends TestCase
 
     public function test_reader_dto_can_inject_database_and_table_for_sql_query()
     {
-        $queryBuilder = TimestreamQueryBuilder::query()
+        $queryBuilder = TimestreamBuilder::query()
             ->select('*')
             ->whereAgo('time', '24h', '>=')
             ->whereIn('measure_value::varchar', ['reviewer', 'open', 'closed'])

@@ -2,11 +2,11 @@
 
 namespace Ringierimu\AwsTimestream\Dto;
 
-use Ringierimu\AwsTimestream\Query\TimestreamQuery;
+use Ringierimu\AwsTimestream\Builder\Builder;
 
 class TimestreamReaderDto extends AbstractTimestreamDto
 {
-    public function __construct(protected TimestreamQuery $query, string $forTable = null)
+    public function __construct(protected Builder $builder, string $forTable = null)
     {
         $this->database = config('timestream.database');
         $this->tables = config('timestream.tables.sources');
@@ -16,23 +16,23 @@ class TimestreamReaderDto extends AbstractTimestreamDto
         }
     }
 
-    public static function make(TimestreamQuery $query, string $forTable = null): self
+    public static function make(Builder $builder, string $forTable = null): self
     {
-        return new static($query, $forTable);
+        return new static($builder, $forTable);
     }
 
-    public function getQuery(): TimestreamQuery
+    public function getQuery(): Builder
     {
-        return $this->query;
+        return $this->builder;
     }
 
     protected function getQueryString(): string
     {
-        if (!$this->query->getFromQuery()) {
-            $this->query->from($this->database, $this->table);
+        if (!$this->builder->getFromQuery()) {
+            $this->builder->from($this->database, $this->table);
         }
 
-        return $this->query->getSql();
+        return $this->builder->getSql();
     }
 
     public function toArray(): array

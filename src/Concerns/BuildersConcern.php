@@ -1,44 +1,33 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Trait;
+namespace Ringierimu\AwsTimestream\Concerns;
 
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
 
-trait CanUseTimestreamQuery
+trait BuildersConcern
 {
-    public function getDatabase(): ?string
-    {
-        return $this->database;
-    }
-
-    public function getTable(): ?string
-    {
-        return $this->table;
-    }
-
-    public function getConnection(): string
-    {
-        return '"' . $this->databse . '"."' . $this->table . '"';
-    }
-
-    public function selectRaw(string $statetement): self
+    public function selectRaw(string $statetement): QueryBuilderContract
     {
         $this->selectStatement = $statetement;
 
         return $this;
     }
 
-    public function select(string $columns): self
+    public function select(string $columns): QueryBuilderContract
     {
         $this->selectStatement = sprintf('SELECT %s', $columns);
 
         return $this;
     }
 
-    public function from(string $database, string $table, string $alias = null): self
+    public function from(string $database, string $table, string $alias = null): QueryBuilderContract
     {
+        $this->database = $database;
+        $this->table = $table;
+
         $this->fromQuery = 'FROM "' . $database . '"."' . $table . '"';
 
         if ($alias) {
@@ -48,21 +37,21 @@ trait CanUseTimestreamQuery
         return $this;
     }
 
-    public function fromRaw(string $statetement): self
+    public function fromRaw(string $statetement): QueryBuilderContract
     {
         $this->fromQuery = $statetement;
 
         return $this;
     }
 
-    public function orderBy(string $column, string $direction = 'asc'): self
+    public function orderBy(string $column, string $direction = 'asc'): QueryBuilderContract
     {
         $this->orderByQuery = sprintf('ORDER BY %s %s', $column, $direction);
 
         return $this;
     }
 
-    public function groupBy($args): self
+    public function groupBy($args): QueryBuilderContract
     {
         $columns = func_get_args();
         $this->groupByQuery = sprintf('GROUP BY %s', implode(', ', $columns));
@@ -77,7 +66,7 @@ trait CanUseTimestreamQuery
      * @param  string  $boolean
      * @param  bool  $ago
      */
-    public function where(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
+    public function where(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): QueryBuilderContract
     {
         $query = Str::of($this->whereQuery);
 
@@ -123,7 +112,7 @@ trait CanUseTimestreamQuery
      * @param  string  $operator
      * @param  string  $boolean
      */
-    public function whereAgo(string $column, $value, string $operator = '=', string $boolean = 'and'): self
+    public function whereAgo(string $column, $value, string $operator = '=', string $boolean = 'and'): QueryBuilderContract
     {
         return $this->where($column, $value, $operator, $boolean, true);
     }
@@ -133,12 +122,12 @@ trait CanUseTimestreamQuery
      * @param  string  $column
      * @param  string  $operator
      */
-    public function andWhere(string $column, $value, string $operator = '='): self
+    public function andWhere(string $column, $value, string $operator = '='): QueryBuilderContract
     {
         return $this->where($column, $value, $operator);
     }
 
-    public function whereIn(string $column, array|\Closure $values, string $boolean = 'and', $not = false): self
+    public function whereIn(string $column, array|\Closure $values, string $boolean = 'and', $not = false): QueryBuilderContract
     {
         if (empty($values)) {
             return $this;
@@ -185,12 +174,12 @@ trait CanUseTimestreamQuery
         return $this;
     }
 
-    public function whereNotIn(string $column, array|\Closure $values, string $boolean = 'and'): self
+    public function whereNotIn(string $column, array|\Closure $values, string $boolean = 'and'): QueryBuilderContract
     {
         return $this->whereIn($column, $values, $boolean, true);
     }
 
-    public function whereBetween(string $column, array $values, $boolean = 'and', $not = false): self
+    public function whereBetween(string $column, array $values, $boolean = 'and', $not = false): QueryBuilderContract
     {
         if (empty($values)) {
             return $this;
@@ -222,12 +211,12 @@ trait CanUseTimestreamQuery
         return $this;
     }
 
-    public function whereNotBetween(string $column, array $values, $boolean = 'and'): self
+    public function whereNotBetween(string $column, array $values, $boolean = 'and'): QueryBuilderContract
     {
         return $this->whereBetween($column, $values, $boolean, true);
     }
 
-    public function whereNull(string|array $columns, $boolean = 'and', $not = false): self
+    public function whereNull(string|array $columns, $boolean = 'and', $not = false): QueryBuilderContract
     {
         $type = 'NULL';
 
@@ -262,23 +251,50 @@ trait CanUseTimestreamQuery
         return $this;
     }
 
-    public function whereNotNull(string|array $columns, $boolean = 'and'): self
+    public function whereNotNull(string|array $columns, $boolean = 'and'): QueryBuilderContract
     {
         return $this->whereNull($columns, $boolean, true);
     }
 
-    public function limitBy(string $limit): self
+    public function limitBy(int $limit): QueryBuilderContract
     {
-        Str::of($this->queryString)
-            ->append(sprintf(' LIMIT %s ', $limit));
+        $this->limitByQuery = sprintf('LIMIT %s ', $limit);
 
         return $this;
     }
 
-    public function withQuery(string $as, Closure $callback): self
+    public function withQuery(string $as, Closure $callback): QueryBuilderContract
     {
         $this->withQueries = array_merge($this->withQueries, [$as . ' AS (' . call_user_func($callback) . ')']);
 
         return $this;
+    }
+
+    public function mergeQuery(QueryBuilderContract $queryBuilder)
+    {
+        if ($withQueries = $queryBuilder->getWithQueries()) {
+            $this->withQueries = $withQueries;
+        }
+
+        if ($select = $queryBuilder->getSelectStatement()) {
+            $this->selectStatement = $select;
+        }
+
+        if ($queryBuilder->getWhereQuery()) {
+            $query = $queryBuilder->getWhereQuery();
+            if ($this->getWhereQuery()) {
+                $query = sprintf(' AND %s', trim($this->strTrimFrom($queryBuilder->getWhereQuery(), 'WHERE')));
+            }
+
+            $this->whereQuery = Str::of($this->whereQuery)->append($query);
+        }
+
+        if ($fromQuery = $queryBuilder->getFromQuery()) {
+            $this->fromQuery = $fromQuery;
+        }
+
+        if ($orderBy = $queryBuilder->getOrderByQuery()) {
+            $this->orderByQuery = $orderBy;
+        }
     }
 }

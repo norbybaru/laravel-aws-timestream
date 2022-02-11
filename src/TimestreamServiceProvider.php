@@ -3,8 +3,10 @@
 namespace Ringierimu\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
-use Ringierimu\AwsTimestream\Contract\TimestreamQueryContract;
-use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\AwsTimestream\Builder\QueryBuilder;
+use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
+use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
+use Ringierimu\AwsTimestream\Support\PayloadBuilder;
 
 class TimestreamServiceProvider extends ServiceProvider
 {
@@ -17,7 +19,8 @@ class TimestreamServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'timestream');
 
-        $this->app->bind(TimestreamQueryContract::class, TimestreamQueryBuilder::class);
+        $this->app->bind(QueryBuilderContract::class, QueryBuilder::class);
+        $this->app->bind(PayloadBuilderContract::class, PayloadBuilder::class);
 
         $this->app->singleton(TimestreamManager::class, function ($app) {
             return new TimestreamManager(

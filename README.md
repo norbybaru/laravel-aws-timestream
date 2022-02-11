@@ -29,24 +29,20 @@ AWS_TIMESTREAM_PROFILE=
 
 ## Basic Usage
 ### Query Timestream
-Using `TimestreamQueryBuilder::query()` will give autocomplete of all available functions
-Common components used when querying Timestream 
-- `TimestreamQueryBuilder` 
-- `TimestreamReaderDto`
-- `TimestreamService`
+Using `TimestreamBuilder::query()` will give autocomplete of all available functions
 
-1. Using `TimestreamQueryBuilder` to build query with `TimestreamReaderDto` generating a object that can be consumed by `TimestreamService` query function
+1. Using `TimestreamBuilder` to build query to be passed onto `TimestreamReaderDto` which generate am object that can be consumed by `TimestreamService` query function
 
 ```php
 <?php
 
 use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\AwsTimestream\TimestreamBuilder;
 use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
 
 public function overview(TimestreamService $timestreamService)
 {
-    $queryBuilder = TimestreamQueryBuilder::query()
+    $queryBuilder = TimestreamBuilder::query()
         ->select('*')
         ->from("database-name", 'table-name')
         ->whereAgo('time', '24h', '>=')
@@ -65,12 +61,12 @@ public function overview(TimestreamService $timestreamService)
 <?php
 
 use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\Query\TimestreamQueryBuilder;
+use Ringierimu\AwsTimestream\TimestreamBuilder;
 use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
 
 public function overview(TimestreamService $timestreamService)
 {
-    $queryBuilder = TimestreamQueryBuilder::query()
+    $queryBuilder = TimestreamBuilder::query()
         ->select('*')
         ->whereAgo('time', '24h', '>=')
         ->whereNotIn('measure_value::varchar', ['reviewer', 'open', 'closed'])
@@ -83,18 +79,15 @@ public function overview(TimestreamService $timestreamService)
 }
 ```
 ### Timestream Ingestion
-We need to build our payload that Timestream will accept for ingestion. The following are the common components used for inhgestions
-- `TimestreamPayloadBuilder`
-- `TimestreamWriterDto`
-- `TimestreamService`
+We need to build our payload that Timestream will accept for ingestion.
 
-1. Use `TimestreamPayloadBuilder` to build ingestion payload
+1. Use `TimestreamBuilder` to build ingestion payload
 ```php
 <?php
 
 use Ringierimu\AwsTimestream\TimestreamService;
 use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\Support\TimestreamPayloadBuilder;
+use Ringierimu\AwsTimestream\TimestreamBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {
@@ -108,7 +101,7 @@ public function ingest(TimestreamService $timestreamService)
         ],
     ];
 
-    $payload = TimestreamPayloadBuilder::make(
+    $payload = TimestreamBuilder::payload(
         $metrics['measure_name'],
         $metrics['measure_value'],
         $metrics['time'],
@@ -155,7 +148,7 @@ public function ingest(TimestreamService $timestreamService)
     $commonAttributes['mac_address'] = 'randomstring';
 
     collect($metrics)->map(function ($metric) {
-        return TimestreamPayloadBuilder::make(
+        return TimestreamBuilder::payload(
             $metric['measure_name'],
             $metric['measure_value'],
             $metric['time'],
@@ -165,7 +158,7 @@ public function ingest(TimestreamService $timestreamService)
         ->toArray();
     });
 
-    $common = TimestreamPayloadBuilder::buildCommonAttributes($commonAttributes);
+    $common = TimestreamBuilder::commonAttributes($commonAttributes);
 
     $timestreamWriter = TimestreamWriterDto::make($metrics, $common, 'table-name');
     return $timestreamService->write($timestreamWriter);

@@ -4,7 +4,7 @@ namespace Ringierimu\AwsTimestream\Contract;
 
 use Closure;
 
-interface TimestreamQueryContract
+interface QueryBuilderContract
 {
     public function getDatabase(): ?string;
 
@@ -42,7 +42,13 @@ interface TimestreamQueryContract
 
     public function whereNotNull(string|array $columns, $boolean = 'and'): self;
 
-    public function limitBy(string $limit): self;
+    public function limitBy(int $limit): self;
 
     public function withQuery(string $as, Closure $callback): self;
+
+    public function getSql(): string;
+
+    public static function query(): self;
+
+    public function mergeQuery(QueryBuilderContract $builder);
 }
