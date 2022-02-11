@@ -1,6 +1,7 @@
 {
     "name": "ringierimu/laravel-aws-timestream",
     "description": "Library to interact with AWS Timestream service via API",
+    "keywords": ["aws timestream", "laravel aws timestream", "laravel timeseries db", "timeseries db"],
     "type": "library",
     "extra": {
         "laravel": {
@@ -27,13 +28,13 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/support": "^8.0",
+        "illuminate/support": "^8.0|^9.0",
         "aws/aws-sdk-php": "^3.209"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^6.24"
+        "orchestra/testbench": "^6.24|^7.0"
     }
 }

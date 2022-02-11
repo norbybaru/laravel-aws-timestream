@@ -5,9 +5,11 @@
 AWS Timestream is a fast, scalable, and serverless time series database service.
 This package is an opinionated implementation to query timestream and ingest data into timestream.
 
-It provides a query builder class which has common timeseries sql function which is inspired by Laravel Eloquent ORM see ` Ringierimu\AwsTimestream\Query\Contract\TimestreamQueryContract`
+It provides a query builder class which has common timeseries sql function. This was inspired by Laravel Eloquent ORM. 
+See supported query functions `Ringierimu\AwsTimestream\Contract\QueryBuilderContract`
 
-It also provide a payoad builder class to format your data correctly to ingest into timestream. See `Ringierimu\AwsTimestream\Support\TimestreamPayloadBuilder`
+It also provide a payload builder class to format your data correctly to ingest into timestream. 
+See `Ringierimu\AwsTimestream\Contract\PayloadBuilderContract`
 
 ## Install
 ```bash
