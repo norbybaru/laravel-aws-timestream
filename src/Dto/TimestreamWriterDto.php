@@ -14,9 +14,9 @@ class TimestreamWriterDto extends AbstractTimestreamDto
         }
     }
 
-    public static function make(array $recodrs, array $commonAttributes = [], string $forTable = null): self
+    public static function make(array $records, array $commonAttributes = [], string $forTable = null): self
     {
-        return new static($recodrs, $commonAttributes, $forTable);
+        return new static($records, $commonAttributes, $forTable);
     }
 
     public function toArray(): array

@@ -10,5 +10,5 @@ interface PayloadBuilderContract
 
     public static function buildCommonAttributes(array $attributes): array;
 
-    public function toArray(): array;
+    public function toArray(bool $batch = false): array;
 }

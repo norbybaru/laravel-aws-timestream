@@ -23,7 +23,8 @@
     "authors": [
         {
             "name": "Norby Baruani",
-            "email": "norbyb@ringier.co.za"
+            "email": "norbyb@ringier.co.za",
+            "role": "Developer"
         }
     ],
     "require": {
@@ -33,8 +34,16 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
+    "scripts": {
+        "test": "phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    },
     "require-dev": {
+        "guzzlehttp/guzzle": "^7.4",
+        "orchestra/testbench": "^6.24|^7.0",
         "phpunit/phpunit": "^9.5",
-        "orchestra/testbench": "^6.24|^7.0"
+        "vlucas/phpdotenv": "^5.4"
     }
 }

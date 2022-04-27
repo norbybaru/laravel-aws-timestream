@@ -38,11 +38,12 @@ class WriterUnitTest extends TestCase
         )->toArray();
 
         $this->assertIsArray($payload);
-        $this->assertArrayHasKey('Dimensions', $payload);
-        $this->assertArrayHasKey('MeasureName', $payload);
-        $this->assertArrayHasKey('MeasureValue', $payload);
-        $this->assertArrayHasKey('MeasureValueType', $payload);
-        $this->assertArrayHasKey('Time', $payload);
+        $this->assertCount(1, $payload);
+        $this->assertArrayHasKey('Dimensions', $payload[0]);
+        $this->assertArrayHasKey('MeasureName', $payload[0]);
+        $this->assertArrayHasKey('MeasureValue', $payload[0]);
+        $this->assertArrayHasKey('MeasureValueType', $payload[0]);
+        $this->assertArrayHasKey('Time', $payload[0]);
     }
 
     public function test_it_should_return_accurate_payload_values()
@@ -57,11 +58,11 @@ class WriterUnitTest extends TestCase
             $metrics['dimensions']
         )->toArray();
 
-        $this->assertEquals($metrics['measure_name'], $payload['MeasureName']);
-        $this->assertEquals($metrics['measure_value'], $payload['MeasureValue']);
-        $this->assertEquals('DOUBLE', $payload['MeasureValueType']);
-        $this->assertCount(count($metrics['dimensions']), $payload['Dimensions']);
-        $this->assertEquals($metrics['time']->getPreciseTimestamp(3), $payload['Time']);
+        $this->assertEquals($metrics['measure_name'], $payload[0]['MeasureName']);
+        $this->assertEquals($metrics['measure_value'], $payload[0]['MeasureValue']);
+        $this->assertEquals('DOUBLE', $payload[0]['MeasureValueType']);
+        $this->assertCount(count($metrics['dimensions']), $payload[0]['Dimensions']);
+        $this->assertEquals($metrics['time']->getPreciseTimestamp(3), $payload[0]['Time']);
     }
 
     public function test_it_should_return_correct_writer_dto_structure()
@@ -75,6 +76,75 @@ class WriterUnitTest extends TestCase
             'DOUBLE',
             $metrics['dimensions']
         )->toArray();
+
+        $timestreamWriter = TimestreamWriterDto::make($payload)->forTable('test');
+        $this->assertInstanceOf(TimestreamWriterDto::class, $timestreamWriter);
+
+        $payload = $timestreamWriter->toArray();
+        $this->assertArrayHasKey('DatabaseName', $payload);
+        $this->assertArrayHasKey('Records', $payload);
+        $this->assertArrayHasKey('TableName', $payload);
+    }
+
+    public function test_it_should_return_correct_data_for_batch_ingestion()
+    {
+        $metrics = [
+            [
+                'measure_name' => 'cpu_usage',
+                'measure_value' => $this->faker->randomDigit,
+                'measure_value_type' => 'VARCHAR',
+                'time' => Carbon::now(),
+                'dimensions' => [
+                    'ref' => $this->faker->uuid,
+                ],
+            ],
+            [
+                'measure_name' => 'memory_usage',
+                'measure_value' => $this->faker->randomDigit,
+                'measure_value_type' => 'DOUBLE',
+                'time' => Carbon::now(),
+                'dimensions' => [
+                    'ref' => $this->faker->uuid,
+                ],
+            ],
+        ];
+
+        $payload = TimestreamBuilder::batchPayload($metrics);
+
+        $this->assertIsArray($payload);
+        $this->assertCount(2, $payload);
+
+        foreach ($payload as $index => $data) {
+            $this->assertEquals($metrics[$index]['measure_name'], $data['MeasureName']);
+            $this->assertEquals($metrics[$index]['measure_value'], $data['MeasureValue']);
+            $this->assertEquals($metrics[$index]['measure_value_type'], $data['MeasureValueType']);
+            $this->assertCount(count($metrics[$index]['dimensions']), $data['Dimensions']);
+            $this->assertEquals($metrics[$index]['time']->getPreciseTimestamp(3), $data['Time']);
+        }
+    }
+
+    public function test_it_should_return_correct_dto_structure_for_batch_ingestion_data()
+    {
+        $metrics = [
+            [
+                'measure_name' => 'cpu_usage',
+                'measure_value' => $this->faker->randomDigit,
+                'time' => Carbon::now(),
+                'dimensions' => [
+                    'ref' => $this->faker->uuid,
+                ],
+            ],
+            [
+                'measure_name' => 'memory_usage',
+                'measure_value' => $this->faker->randomDigit,
+                'time' => Carbon::now(),
+                'dimensions' => [
+                    'ref' => $this->faker->uuid,
+                ],
+            ],
+        ];
+
+        $payload = TimestreamBuilder::batchPayload($metrics);
 
         $timestreamWriter = TimestreamWriterDto::make($payload)->forTable('test');
         $this->assertInstanceOf(TimestreamWriterDto::class, $timestreamWriter);
@@ -111,18 +181,9 @@ class WriterUnitTest extends TestCase
 
         $common = TimestreamBuilder::commonAttributes($commonAttributes);
 
-        collect($metrics)->map(function ($metric) {
-            return TimestreamBuilder::payload(
-                $metric['measure_name'],
-                $metric['measure_value'],
-                $metric['time'],
-                'VARCHAR',
-                $metric['dimensions'],
-            )
-            ->toArray();
-        });
+        $payload = TimestreamBuilder::batchPayload($metrics);
 
-        $timestreamWriter = TimestreamWriterDto::make($metrics, $common, 'test');
+        $timestreamWriter = TimestreamWriterDto::make($payload, $common, 'test');
         $payload = $timestreamWriter->toArray();
 
         $this->assertArrayHasKey('CommonAttributes', $payload);

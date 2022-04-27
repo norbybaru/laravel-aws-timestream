@@ -30,17 +30,17 @@ class TimestreamService
         $this->writer = $manager->getWriter();
     }
 
-    public function batchWrite(TimestreamWriterDto $timestreamWriter): void
+    public function batchWrite(TimestreamWriterDto $timestreamWriter): \Aws\Result
     {
-        $this->ingest($timestreamWriter->toArray());
+        return $this->ingest($timestreamWriter->toArray());
     }
 
-    public function write(TimestreamWriterDto $timestreamReader): void
+    public function write(TimestreamWriterDto $timestreamReader): \Aws\Result
     {
-        $this->ingest($timestreamReader->toArray());
+        return $this->ingest($timestreamReader->toArray());
     }
 
-    private function ingest(array $payload): void
+    private function ingest(array $payload): \Aws\Result
     {
         try {
             $result = $this->writer->writeRecords($payload);
@@ -65,6 +65,8 @@ class TimestreamService
 
             throw new FailTimestreamWriterException($status);
         }
+
+        return $result;
     }
 
     public function query(TimestreamReaderDto $timestreamReader): Collection

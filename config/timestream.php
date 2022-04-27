@@ -19,7 +19,7 @@ return [
     'profile' => env('AWS_TIMESTREAM_PROFILE'),
 
     /**
-     * Databse name
+     * Database name
      */
     'database' => env('AWS_TIMESTREAM_DATABASE'),
 

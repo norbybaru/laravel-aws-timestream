@@ -57,14 +57,20 @@ class PayloadBuilder implements PayloadBuilderContract
         ];
     }
 
-    public function toArray(): array
+    public function toArray(bool $batch = false): array
     {
-        return [
+        $metric = [
             'Dimensions' => $this->dimensions,
             'MeasureName' => $this->measureName,
             'MeasureValue' => (string) $this->measureValue,
             'MeasureValueType' => $this->measureValueType,
             'Time' => (string) $this->time->getPreciseTimestamp(3),
         ];
+
+        if (!$batch) {
+            return [$metric];
+        }
+
+        return $metric;
     }
 }

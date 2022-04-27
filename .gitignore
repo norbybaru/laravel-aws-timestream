@@ -1,3 +1,5 @@
 *.lock
+/.env
 /.phpunit.result.cache
+/.vscode
 /vendor

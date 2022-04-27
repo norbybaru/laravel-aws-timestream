@@ -12,10 +12,19 @@ abstract class TestCase extends OrchestraTestCase
     use ConfigurableTrait;
     use WithFaker;
 
+    protected $loadEnvironmentVariables = true;
+
     protected function setUp(): void
     {
+        $this->loadEnvironmentVariables();
         parent::setUp();
         $this->setUpFaker();
+    }
+
+    protected function loadEnvironmentVariables()
+    {
+        $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+        $dotenv->safeLoad();
     }
 
     /**

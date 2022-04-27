@@ -149,20 +149,11 @@ public function ingest(TimestreamService $timestreamService)
     $commonAttributes['device_name'] = 'device_1';
     $commonAttributes['mac_address'] = 'randomstring';
 
-    collect($metrics)->map(function ($metric) {
-        return TimestreamBuilder::payload(
-            $metric['measure_name'],
-            $metric['measure_value'],
-            $metric['time'],
-            'VARCHAR',
-            $metric['dimensions'],
-        )
-        ->toArray();
-    });
+    $payload = TimestreamBuilder::batchPayload($metrics);
 
     $common = TimestreamBuilder::commonAttributes($commonAttributes);
 
-    $timestreamWriter = TimestreamWriterDto::make($metrics, $common, 'table-name');
+    $timestreamWriter = TimestreamWriterDto::make($payload, $common, 'table-name');
     return $timestreamService->write($timestreamWriter);
 }
 ```
