@@ -4,7 +4,7 @@ namespace Ringierimu\AwsTimestream\Dto;
 
 use Ringierimu\AwsTimestream\Builder\Builder;
 
-class TimestreamReaderDto extends AbstractTimestreamDto
+final class TimestreamReaderDto extends AbstractTimestreamDto
 {
     public function __construct(protected Builder $builder, string $forTable = null)
     {
@@ -18,7 +18,7 @@ class TimestreamReaderDto extends AbstractTimestreamDto
 
     public static function make(Builder $builder, string $forTable = null): self
     {
-        return new static($builder, $forTable);
+        return new self($builder, $forTable);
     }
 
     public function getQuery(): Builder

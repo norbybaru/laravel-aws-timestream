@@ -3,10 +3,10 @@
 namespace Ringierimu\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
+use Ringierimu\AwsTimestream\Builder\PayloadBuilder;
 use Ringierimu\AwsTimestream\Builder\QueryBuilder;
 use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
 use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
-use Ringierimu\AwsTimestream\Support\PayloadBuilder;
 
 class TimestreamServiceProvider extends ServiceProvider
 {

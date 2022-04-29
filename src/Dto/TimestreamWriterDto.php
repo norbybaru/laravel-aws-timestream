@@ -2,7 +2,7 @@
 
 namespace Ringierimu\AwsTimestream\Dto;
 
-class TimestreamWriterDto extends AbstractTimestreamDto
+final class TimestreamWriterDto extends AbstractTimestreamDto
 {
     public function __construct(protected array $records, protected array $commonAttributes = [], string $forTable = null)
     {
@@ -16,7 +16,7 @@ class TimestreamWriterDto extends AbstractTimestreamDto
 
     public static function make(array $records, array $commonAttributes = [], string $forTable = null): self
     {
-        return new static($records, $commonAttributes, $forTable);
+        return new self($records, $commonAttributes, $forTable);
     }
 
     public function toArray(): array

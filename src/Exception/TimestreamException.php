@@ -6,9 +6,8 @@ use Exception;
 
 abstract class TimestreamException extends Exception
 {
-    public function __construct(Exception $e, array $context = [])
+    public function __construct(Exception $e, protected array $context = [])
     {
-        $this->context = $context;
         parent::__construct($e->getMessage(), $e->getCode(), $e->getPrevious());
     }
 

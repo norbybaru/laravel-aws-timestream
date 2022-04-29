@@ -9,9 +9,9 @@ use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
 
 trait BuildersConcern
 {
-    public function selectRaw(string $statetement): QueryBuilderContract
+    public function selectRaw(string $statement): QueryBuilderContract
     {
-        $this->selectStatement = $statetement;
+        $this->selectStatement = $statement;
 
         return $this;
     }
@@ -37,9 +37,9 @@ trait BuildersConcern
         return $this;
     }
 
-    public function fromRaw(string $statetement): QueryBuilderContract
+    public function fromRaw(string $statement): QueryBuilderContract
     {
-        $this->fromQuery = $statetement;
+        $this->fromQuery = $statement;
 
         return $this;
     }

@@ -5,7 +5,7 @@ namespace Ringierimu\AwsTimestream\Builder;
 use Illuminate\Support\Carbon;
 use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
 
-class PayloadBuilder implements PayloadBuilderContract
+final class PayloadBuilder implements PayloadBuilderContract
 {
     protected array $dimensions;
 
@@ -28,7 +28,7 @@ class PayloadBuilder implements PayloadBuilderContract
         string $measureValueType = 'DOUBLE',
         array $dimensions = []
     ): self {
-        return new static($measureName, $measureValue, $time, $measureValueType, $dimensions);
+        return new self($measureName, $measureValue, $time, $measureValueType, $dimensions);
     }
 
     private function buildDimensions(string $name, $value)

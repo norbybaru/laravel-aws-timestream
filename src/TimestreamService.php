@@ -118,20 +118,18 @@ class TimestreamService
         $rowFormatted = [];
         foreach ($row['Data'] as $key => $value) {
             $formattedKey = Str::beforeLast(Arr::get($columnInfo, "{$key}.Name"), '::');
-            if (Arr::has($rowFormatted, $formattedKey) == false
-                || (
-                    Arr::has($rowFormatted, $formattedKey) == true
-                    && Arr::get($rowFormatted, $formattedKey) == null
-                )
-            ) {
-                $rowFormatted[$formattedKey] = $this->dataType(
-                    Arr::get(
-                        $columnInfo,
-                        "{$key}.Type.ScalarType"
-                    ),
-                    Arr::get($value, 'ScalarValue', null)
-                );
+
+            if (Arr::get($rowFormatted, $formattedKey)) {
+                continue;
             }
+
+            $rowFormatted[$formattedKey] = $this->dataType(
+                Arr::get(
+                    $columnInfo,
+                    "{$key}.Type.ScalarType"
+                ),
+                Arr::get($value, 'ScalarValue', null)
+            );
         }
 
         return $rowFormatted;
@@ -148,7 +146,7 @@ class TimestreamService
             'VARCHAR' => (string) $value,
             'DOUBLE' => (float) $value,
             'TIMESTAMP' => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
-            default => throw new UnknownTimestreamDataTypeException('Unkown Data Type From TimeStream: ' . $type),
+            default => throw new UnknownTimestreamDataTypeException('Unknown Data Type From TimeStream: ' . $type),
         };
 
         return $return;

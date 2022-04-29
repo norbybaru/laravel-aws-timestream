@@ -2,17 +2,19 @@
 
 namespace Ringierimu\AwsTimestream\Builder;
 
-class QueryBuilder extends Builder
+final class QueryBuilder extends Builder
 {
     public function __construct()
     {
-        if (method_exists($this, 'handle')) {
-            $this->handle();
-        }
+        $this->execute();
+    }
+
+    public function execute()
+    {
     }
 
     public static function query(): self
     {
-        return new static();
+        return new self();
     }
 }

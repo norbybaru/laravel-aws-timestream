@@ -2,4 +2,5 @@
 /.env
 /.phpunit.result.cache
 /.vscode
+/build
 /vendor

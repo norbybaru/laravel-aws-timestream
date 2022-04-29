@@ -12,13 +12,13 @@ interface QueryBuilderContract
 
     public function getConnection(): string;
 
-    public function selectRaw(string $statetement): self;
+    public function selectRaw(string $statement): self;
 
     public function select(string $columns): self;
 
     public function from(string $database, string $table, string $alias = null): self;
 
-    public function fromRaw(string $statetement): self;
+    public function fromRaw(string $statement): self;
 
     public function orderBy(string $column, string $direction = 'asc'): self;
 
@@ -45,6 +45,18 @@ interface QueryBuilderContract
     public function limitBy(int $limit): self;
 
     public function withQuery(string $as, Closure $callback): self;
+
+    public function getWithQueries(): array;
+
+    public function getSelectStatement(): string;
+
+    public function getWhereQuery(): string;
+
+    public function getOrderByQuery(): string;
+
+    public function getLimitByQuery(): string;
+
+    public function getFromQuery(): string;
 
     public function getSql(): string;
 

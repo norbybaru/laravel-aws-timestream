@@ -10,7 +10,6 @@ abstract class Builder implements QueryBuilderContract
 {
     use BuildersConcern;
 
-    private string $queryString = '';
     protected string $database = '';
     protected string $table = '';
     protected string $fromQuery = '';
@@ -66,7 +65,7 @@ abstract class Builder implements QueryBuilderContract
         return $this->orderByQuery;
     }
 
-    public function getGroupByQuery()
+    public function getGroupByQuery(): string
     {
         return $this->groupByQuery;
     }
