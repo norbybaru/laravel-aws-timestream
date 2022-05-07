@@ -1,11 +1,11 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests\Unit;
+namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
-use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
-use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
-use Ringierimu\AwsTimestream\Tests\TestCase;
-use Ringierimu\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
 
 class ReaderUnitTest extends TestCase
 {

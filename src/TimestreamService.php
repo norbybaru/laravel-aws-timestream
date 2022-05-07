@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream;
+namespace NorbyBaru\AwsTimestream;
 
 use Aws\Result;
 use Aws\TimestreamQuery\Exception\TimestreamQueryException;
@@ -12,11 +12,11 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
-use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\Exception\FailTimestreamQueryException;
-use Ringierimu\AwsTimestream\Exception\FailTimestreamWriterException;
-use Ringierimu\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Exception\FailTimestreamQueryException;
+use NorbyBaru\AwsTimestream\Exception\FailTimestreamWriterException;
+use NorbyBaru\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
 
 class TimestreamService
 {

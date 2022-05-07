@@ -1,25 +1,25 @@
 # Laravel AWS Timestream
 
-[![Tests](https://github.com/RingierIMU/laravel-aws-timestream/actions/workflows/run-tests.yml/badge.svg)](https://github.com/RingierIMU/laravel-aws-timestream/actions/workflows/run-tests.yml)
+[![Tests](https://github.com/NorbyBaru/laravel-aws-timestream/actions/workflows/run-tests.yml/badge.svg)](https://github.com/NorbyBaru/laravel-aws-timestream/actions/workflows/run-tests.yml)
 
 AWS Timestream is a fast, scalable, and serverless time series database service.
 This package is an opinionated implementation to query timestream and ingest data into timestream.
 
 It provides a query builder class which has common timeseries sql function. This was inspired by Laravel Eloquent ORM. 
-See supported query functions `Ringierimu\AwsTimestream\Contract\QueryBuilderContract`
+See supported query functions `NorbyBaru\AwsTimestream\Contract\QueryBuilderContract`
 
 It also provide a payload builder class to format your data correctly to ingest into timestream. 
-See `Ringierimu\AwsTimestream\Contract\PayloadBuilderContract`
+See `NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract`
 
 ## Install
 ```bash
-composer require ringierimu/laravel-aws-timestream
+composer require NorbyBaru/laravel-aws-timestream
 ```
 
 ## Configuration
 - Publish config
 ```bash
-php artisan vendor:publish --provider="Ringierimu\AwsTimestream\TimestreamServiceProvider" --tag="timestream-config"
+php artisan vendor:publish --provider="NorbyBaru\AwsTimestream\TimestreamServiceProvider" --tag="timestream-config"
 ```
 - Open `timestream.php` config file and setup your databse name and tables
 - Setup you AWS Timestream keys and permissions with the following enviroment variable
@@ -38,9 +38,9 @@ Using `TimestreamBuilder::query()` will give autocomplete of all available funct
 ```php
 <?php
 
-use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\TimestreamBuilder;
-use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\TimestreamService;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 
 public function overview(TimestreamService $timestreamService)
 {
@@ -62,9 +62,9 @@ public function overview(TimestreamService $timestreamService)
  ```php
 <?php
 
-use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\TimestreamBuilder;
-use Ringierimu\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\TimestreamService;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 
 public function overview(TimestreamService $timestreamService)
 {
@@ -87,9 +87,9 @@ We need to build our payload that Timestream will accept for ingestion.
 ```php
 <?php
 
-use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\TimestreamService;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {
@@ -121,9 +121,9 @@ public function ingest(TimestreamService $timestreamService)
 ```php
 <?php
 
-use Ringierimu\AwsTimestream\TimestreamService;
-use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\Support\TimestreamPayloadBuilder;
+use NorbyBaru\AwsTimestream\TimestreamService;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Support\TimestreamPayloadBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {

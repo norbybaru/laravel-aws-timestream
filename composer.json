@@ -1,29 +1,29 @@
 {
-    "name": "ringierimu/laravel-aws-timestream",
+    "name": "norbybaru/laravel-aws-timestream",
     "description": "Library to interact with AWS Timestream service via API",
     "keywords": ["aws timestream", "laravel aws timestream", "laravel timeseries db", "timeseries db"],
     "type": "library",
     "extra": {
         "laravel": {
             "providers": [
-                "Ringierimu\\AwsTimestream\\TimestreamServiceProvider"
+                "NorbyBaru\\AwsTimestream\\TimestreamServiceProvider"
             ]
         }
     },
     "autoload": {
         "psr-4": {
-            "Ringierimu\\AwsTimestream\\": "src/"
+            "NorbyBaru\\AwsTimestream\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ringierimu\\AwsTimestream\\Tests\\": "tests/"
+            "NorbyBaru\\AwsTimestream\\Tests\\": "tests/"
         }
     },
     "authors": [
         {
             "name": "Norby Baruani",
-            "email": "norbyb@ringier.co.za",
+            "email": "norby.baruani@gmail.com",
             "role": "Developer"
         }
     ],

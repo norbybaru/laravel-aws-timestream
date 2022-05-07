@@ -1,11 +1,11 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests;
+namespace NorbyBaru\AwsTimestream\Tests;
 
 use Illuminate\Foundation\Testing\WithFaker;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Ringierimu\AwsTimestream\Tests\Fixtures\Traits\ConfigurableTrait;
-use Ringierimu\AwsTimestream\TimestreamServiceProvider;
+use NorbyBaru\AwsTimestream\Tests\Fixtures\Traits\ConfigurableTrait;
+use NorbyBaru\AwsTimestream\TimestreamServiceProvider;
 
 abstract class TestCase extends OrchestraTestCase
 {

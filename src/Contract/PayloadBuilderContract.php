@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Contract;
+namespace NorbyBaru\AwsTimestream\Contract;
 
 use Illuminate\Support\Carbon;
 

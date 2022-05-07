@@ -1,12 +1,12 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests\Unit;
+namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
 use Illuminate\Support\Carbon;
-use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
-use Ringierimu\AwsTimestream\Dto\TimestreamWriterDto;
-use Ringierimu\AwsTimestream\Tests\TestCase;
-use Ringierimu\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
 
 class WriterUnitTest extends TestCase
 {
