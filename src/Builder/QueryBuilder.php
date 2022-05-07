@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Builder;
+namespace NorbyBaru\AwsTimestream\Builder;
 
 final class QueryBuilder extends Builder
 {

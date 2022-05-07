@@ -1,11 +1,11 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Concerns;
+namespace NorbyBaru\AwsTimestream\Concerns;
 
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
+use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
 trait BuildersConcern
 {

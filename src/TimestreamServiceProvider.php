@@ -1,12 +1,12 @@
 <?php
 
-namespace Ringierimu\AwsTimestream;
+namespace NorbyBaru\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
-use Ringierimu\AwsTimestream\Builder\PayloadBuilder;
-use Ringierimu\AwsTimestream\Builder\QueryBuilder;
-use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
-use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
+use NorbyBaru\AwsTimestream\Builder\PayloadBuilder;
+use NorbyBaru\AwsTimestream\Builder\QueryBuilder;
+use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
+use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
 class TimestreamServiceProvider extends ServiceProvider
 {

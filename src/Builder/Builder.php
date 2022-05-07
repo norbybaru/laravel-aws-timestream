@@ -1,10 +1,10 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Builder;
+namespace NorbyBaru\AwsTimestream\Builder;
 
 use Illuminate\Support\Str;
-use Ringierimu\AwsTimestream\Concerns\BuildersConcern;
-use Ringierimu\AwsTimestream\Contract\QueryBuilderContract;
+use NorbyBaru\AwsTimestream\Concerns\BuildersConcern;
+use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
 abstract class Builder implements QueryBuilderContract
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Dto;
+namespace NorbyBaru\AwsTimestream\Dto;
 
 abstract class AbstractTimestreamDto
 {

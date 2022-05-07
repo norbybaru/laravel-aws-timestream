@@ -1,8 +1,8 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Tests\Feature;
+namespace NorbyBaru\AwsTimestream\Tests\Feature;
 
-use Ringierimu\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\Tests\TestCase;
 
 class ReaderFeatureTest extends TestCase
 {

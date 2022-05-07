@@ -1,9 +1,9 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Builder;
+namespace NorbyBaru\AwsTimestream\Builder;
 
 use Illuminate\Support\Carbon;
-use Ringierimu\AwsTimestream\Contract\PayloadBuilderContract;
+use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
 
 final class PayloadBuilder implements PayloadBuilderContract
 {

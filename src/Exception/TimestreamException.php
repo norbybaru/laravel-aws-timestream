@@ -1,6 +1,6 @@
 <?php
 
-namespace Ringierimu\AwsTimestream\Exception;
+namespace NorbyBaru\AwsTimestream\Exception;
 
 use Exception;
 
