@@ -1,7 +1,6 @@
 # Laravel AWS Timestream
 
 [![PHPUnit Tests](https://github.com/norbybaru/laravel-aws-timestream/actions/workflows/run-tests.yml/badge.svg?branch=main)](https://github.com/norbybaru/laravel-aws-timestream/actions/workflows/run-tests.yml)
-
 [![PHPStan](https://github.com/norbybaru/laravel-aws-timestream/actions/workflows/phpstan.yml/badge.svg?branch=main)](https://github.com/norbybaru/laravel-aws-timestream/actions/workflows/phpstan.yml)
 
 AWS Timestream is a fast, scalable, and serverless time series database service.
