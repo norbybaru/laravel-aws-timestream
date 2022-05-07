@@ -14,7 +14,7 @@ See `NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract`
 
 ## Install
 ```bash
-composer require norbyBaru/laravel-aws-timestream
+composer require norbybaru/laravel-aws-timestream
 ```
 
 ## Configuration
