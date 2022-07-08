@@ -24,7 +24,7 @@ return [
     'database' => env('AWS_TIMESTREAM_DATABASE'),
 
     /**
-     * Enable query and metedata logging on server
+     * Enable query and metadata logging on server
      */
     'debug_query' => env('TIMESTREAM_DEBUG_QUERY', false),
 
@@ -33,16 +33,11 @@ return [
      */
     'tables' => [
         /**
-         * Default table table name
+         * To handle multiple tables access, you can map them below using key value pair.
+         * The `value`  should represent the table name that you want to access
+         * The `key` is an alias to the table name that can be anything meaningful.
+         * eg. ['listing' => 'listing-kpi', 'github' => 'ingestion-github', 'prod' => 'prod']
          */
-        'default' => null,
-
-        /**
-         * To handle multiple tables acess, you can map them below and access them.
-         * The `value` of the `key` should represent the table name that you want to access
-         * and they `key`  can be anything meaningful.
-         * eg. ['listing' => 'listing-kpi', ['github' => 'ingestion-github']]
-         */
-        'sources' => [],
+        'aliases' => [],
     ],
 ];

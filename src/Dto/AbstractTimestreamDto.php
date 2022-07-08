@@ -17,9 +17,9 @@ abstract class AbstractTimestreamDto
         return $this;
     }
 
-    public function forTable(string $source): self
+    public function forTable(string $alias): self
     {
-        $this->table = $this->tables[$source];
+        $this->table = $this->tables[$alias];
 
         return $this;
     }

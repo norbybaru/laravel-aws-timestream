@@ -55,11 +55,11 @@ class ReaderUnitTest extends TestCase
             ->whereIn('measure_value::varchar', ['reviewer', 'open', 'closed'])
             ->orderBy('time', 'desc');
 
-        $tableSource = 'test';
-        $dto = TimestreamReaderDto::make($queryBuilder, $tableSource);
+        $alias = 'test';
+        $dto = TimestreamReaderDto::make($queryBuilder, $alias);
 
         $database = config('timestream.database');
-        $table = config("timestream.tables.sources.{$tableSource}");
+        $table = config("timestream.tables.aliases.{$alias}");
         $this->assertStringContainsString("FROM \"{$database}\".\"{$table}\"", $dto->toArray()['QueryString']);
     }
 }
