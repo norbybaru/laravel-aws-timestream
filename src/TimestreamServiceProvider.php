@@ -4,7 +4,7 @@ namespace NorbyBaru\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
 use NorbyBaru\AwsTimestream\Builder\PayloadBuilder;
-use NorbyBaru\AwsTimestream\Builder\QueryBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
@@ -19,7 +19,7 @@ class TimestreamServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom($this->configPath(), 'timestream');
 
-        $this->app->bind(QueryBuilderContract::class, QueryBuilder::class);
+        $this->app->bind(QueryBuilderContract::class, TimestreamQueryBuilder::class);
         $this->app->bind(PayloadBuilderContract::class, PayloadBuilder::class);
 
         $this->app->singleton(TimestreamManager::class, function ($app) {

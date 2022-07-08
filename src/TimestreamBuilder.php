@@ -4,7 +4,7 @@ namespace NorbyBaru\AwsTimestream;
 
 use Illuminate\Support\Carbon;
 use NorbyBaru\AwsTimestream\Builder\PayloadBuilder;
-use NorbyBaru\AwsTimestream\Builder\QueryBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
@@ -42,6 +42,6 @@ class TimestreamBuilder
 
     public static function query(): QueryBuilderContract
     {
-        return QueryBuilder::query();
+        return TimestreamQueryBuilder::query();
     }
 }

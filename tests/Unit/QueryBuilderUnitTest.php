@@ -2,7 +2,7 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
-use NorbyBaru\AwsTimestream\Builder\QueryBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
@@ -74,7 +74,7 @@ class QueryBuilderUnitTest extends TestCase
         $this->validateSql("WHERE state IN ('open','draft','published')", $query);
     }
 
-    private function validateSql(string $expected, QueryBuilder $builder)
+    private function validateSql(string $expected, TimestreamQueryBuilder $builder)
     {
         $this->assertEquals($expected, trim($builder->getSql()));
     }
