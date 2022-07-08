@@ -11,8 +11,7 @@ trait ConfigurableTrait
             'secret' => env('AWS_TIMESTREAM_SECRET'),
             'database' => 'test-db',
             'tables' => [
-                'default' => 'default',
-                'sources' => [
+                'aliases' => [
                     'test' => 'default',
                 ],
             ],

@@ -207,18 +207,18 @@ class WriterUnitTest extends TestCase
             $metrics['dimensions']
         )->toArray();
 
-        $table = 'test';
-        $timestreamWriter = TimestreamWriterDto::make($payload)->forTable($table);
+        $alias = 'test';
+        $timestreamWriter = TimestreamWriterDto::make($payload)->forTable($alias);
         $payload = $timestreamWriter->toArray();
 
         $this->assertEquals(config('timestream.database'), $payload['DatabaseName']);
-        $this->assertEquals(config("timestream.tables.sources.{$table}"), $payload['TableName']);
+        $this->assertEquals(config("timestream.tables.aliases.{$alias}"), $payload['TableName']);
 
-        $timestreamWriter = TimestreamWriterDto::make($payload, [], $table);
+        $timestreamWriter = TimestreamWriterDto::make($payload, [], $alias);
         $payload = $timestreamWriter->toArray();
 
         $this->assertEquals(config('timestream.database'), $payload['DatabaseName']);
-        $this->assertEquals(config("timestream.tables.sources.{$table}"), $payload['TableName']);
+        $this->assertEquals(config("timestream.tables.aliases.{$alias}"), $payload['TableName']);
     }
 
     private function generateMetrics(): array

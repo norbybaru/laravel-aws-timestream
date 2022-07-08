@@ -7,7 +7,7 @@ final class TimestreamWriterDto extends AbstractTimestreamDto
     public function __construct(protected array $records, protected array $commonAttributes = [], string $forTable = null)
     {
         $this->database = config('timestream.database');
-        $this->tables = config('timestream.tables.sources');
+        $this->tables = config('timestream.tables.aliases');
 
         if ($forTable) {
             $this->forTable($forTable);

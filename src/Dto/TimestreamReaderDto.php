@@ -9,7 +9,7 @@ final class TimestreamReaderDto extends AbstractTimestreamDto
     public function __construct(protected Builder $builder, string $forTable = null)
     {
         $this->database = config('timestream.database');
-        $this->tables = config('timestream.tables.sources');
+        $this->tables = config('timestream.tables.aliases');
 
         if ($forTable) {
             $this->forTable($forTable);
