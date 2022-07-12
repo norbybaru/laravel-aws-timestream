@@ -14,11 +14,11 @@ class TimestreamQueryBuilder extends Builder
      *
      * @return void
      */
-    protected function builder(): void
+    public function builder(): void
     {}
 
     public static function query(): self
     {
-        return new self();
+        return new static();
     }
 }
