@@ -4,7 +4,7 @@ namespace NorbyBaru\AwsTimestream\Builder;
 
 class TimestreamQueryBuilder extends Builder
 {
-    public function __construct()
+    final public function __construct()
     {
         $this->builder();
     }
