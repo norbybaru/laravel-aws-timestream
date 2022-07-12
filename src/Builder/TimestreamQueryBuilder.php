@@ -11,11 +11,10 @@ class TimestreamQueryBuilder extends Builder
 
     /**
      * Build SQL query
-     *
-     * @return void
      */
     public function builder(): void
-    {}
+    {
+    }
 
     public static function query(): self
     {
