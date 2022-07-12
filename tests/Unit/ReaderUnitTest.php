@@ -2,10 +2,10 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
-use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
-use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\Builder\Builder;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 
 class ReaderUnitTest extends TestCase
 {
@@ -29,7 +29,7 @@ class ReaderUnitTest extends TestCase
             ->whereNotIn('measure_value::varchar', ['reviewer', 'open', 'closed'])
             ->orderBy('time', 'desc');
 
-        $this->assertInstanceOf(QueryBuilderContract::class, $queryBuilder);
+        $this->assertInstanceOf(Builder::class, $queryBuilder);
         $this->assertIsString($queryBuilder->getSql());
         $this->assertEquals($queryBuilder->getSql(), $sql);
     }

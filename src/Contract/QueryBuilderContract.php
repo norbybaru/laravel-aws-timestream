@@ -3,6 +3,7 @@
 namespace NorbyBaru\AwsTimestream\Contract;
 
 use Closure;
+use NorbyBaru\AwsTimestream\Builder\Builder;
 
 interface QueryBuilderContract
 {
@@ -62,5 +63,5 @@ interface QueryBuilderContract
 
     public static function query(): self;
 
-    public function mergeQuery(QueryBuilderContract $builder);
+    public function mergeQuery(Builder $builder);
 }

@@ -2,16 +2,16 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
-use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
-use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\Builder\Builder;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 
 class QueryBuilderUnitTest extends TestCase
 {
     public function test_it_can_return_query_builder()
     {
-        $this->assertInstanceOf(QueryBuilderContract::class, TimestreamBuilder::query());
+        $this->assertInstanceOf(Builder::class, TimestreamBuilder::query());
     }
 
     public function test_it_can_build_where_between_query()
