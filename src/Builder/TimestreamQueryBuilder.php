@@ -4,20 +4,15 @@ namespace NorbyBaru\AwsTimestream\Builder;
 
 class TimestreamQueryBuilder extends Builder
 {
-    final public function __construct()
+    public function __construct()
     {
-        $this->builder();
-    }
-
-    /**
-     * Build SQL query
-     */
-    public function builder(): void
-    {
+        if (method_exists($this, 'builder')) {
+            $this->builder();
+        }
     }
 
     public static function query(): self
     {
-        return new static();
+        return (new self);
     }
 }
