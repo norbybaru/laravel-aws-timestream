@@ -2,10 +2,10 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
-use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\Builder\Builder;
-use NorbyBaru\AwsTimestream\TimestreamBuilder;
 use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
+use NorbyBaru\AwsTimestream\Tests\TestCase;
+use NorbyBaru\AwsTimestream\TimestreamBuilder;
 
 class QueryBuilderUnitTest extends TestCase
 {
