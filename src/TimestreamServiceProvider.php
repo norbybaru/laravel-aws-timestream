@@ -4,9 +4,7 @@ namespace NorbyBaru\AwsTimestream;
 
 use Illuminate\Support\ServiceProvider;
 use NorbyBaru\AwsTimestream\Builder\PayloadBuilder;
-use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
-use NorbyBaru\AwsTimestream\Contract\Builder;
 
 class TimestreamServiceProvider extends ServiceProvider
 {

@@ -6,16 +6,10 @@ class TimestreamQueryBuilder extends Builder
 {
     public function __construct()
     {
-        $this->builder();
+        if (method_exists($this, 'builder')) {
+            $this->builder();
+        }
     }
-
-    /**
-     * Build SQL query
-     *
-     * @return void
-     */
-    protected function builder(): void
-    {}
 
     public static function query(): self
     {

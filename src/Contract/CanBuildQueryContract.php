@@ -4,5 +4,8 @@ namespace NorbyBaru\AwsTimestream\Contract;
 
 interface CanBuildQueryContract
 {
-    public function handle(): void;
+    /**
+     * Build SQL query
+     */
+    public function builder(): void;
 }
