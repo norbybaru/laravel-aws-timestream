@@ -13,6 +13,6 @@ class TimestreamQueryBuilder extends Builder
 
     public static function query(): self
     {
-        return new self();
+        return new static();
     }
 }
