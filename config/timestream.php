@@ -19,6 +19,11 @@ return [
     'profile' => env('AWS_TIMESTREAM_PROFILE'),
 
     /**
+     * AWS region for your Timestream. Default to eu-west-1
+     */
+    'region' => env('AWS_TIMESTREAM_REGION', 'eu-west-1'),
+
+    /**
      * Database name
      */
     'database' => env('AWS_TIMESTREAM_DATABASE'),
