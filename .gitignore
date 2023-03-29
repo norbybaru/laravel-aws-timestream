@@ -1,6 +1,8 @@
 *.lock
+*.bak
 /.env
 /.phpunit.result.cache
 /.vscode
+/*.cache
 /build
 /vendor
