@@ -22,6 +22,16 @@ abstract class Builder implements QueryBuilderContract
     protected string $limitByQuery = '';
     protected array $withQueries = [];
 
+    public function __construct()
+    {
+        $this->builder();
+    }
+
+    public function builder(): self
+    {
+        return $this;
+    }
+
     public function selectRaw(string $statement): self
     {
         $this->selectStatement = $statement;

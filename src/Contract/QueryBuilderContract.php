@@ -61,7 +61,7 @@ interface QueryBuilderContract
 
     public function getSql(): string;
 
-    public static function query(): self;
+    // public static function query(): self;
 
     public function mergeQuery(Builder $builder);
 }
