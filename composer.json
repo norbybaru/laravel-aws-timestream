@@ -31,8 +31,8 @@
     ],
     "require": {
         "php": "^8.0",
-        "illuminate/support": "^8.0|^9.0|^10.0",
-        "aws/aws-sdk-php": "^3.209"
+        "aws/aws-sdk-php": "^3.209",
+        "illuminate/support": "^8.0|^9.52|^10.0"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
