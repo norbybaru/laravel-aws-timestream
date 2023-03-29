@@ -21,9 +21,10 @@ class TimestreamServiceProvider extends ServiceProvider
 
         $this->app->singleton(TimestreamManager::class, function ($app) {
             return new TimestreamManager(
-                config('timestream.key'),
-                config('timestream.secret'),
-                config('timestream.profile'),
+                key: config('timestream.key'),
+                secret: config('timestream.secret'),
+                profile: config('timestream.profile'),
+                region: config('timestream.region') ?? 'eu-west-1',
             );
         });
     }

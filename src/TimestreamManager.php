@@ -16,8 +16,8 @@ class TimestreamManager
         ?string $key,
         ?string $secret,
         ?string $profile,
+        string $region,
         string $version = 'latest',
-        string $region = 'eu-west-1'
     ) {
         $config = [
             'version' => $version,
