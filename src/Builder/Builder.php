@@ -12,6 +12,24 @@ abstract class Builder implements QueryBuilderContract
 {
     use BuildersConcern;
 
+    public const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
+    public const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_FULL = 'FULL';
+    public const JOIN_TYPE_LEFT_OUTER = 'LEFT OUTER';
+    public const JOIN_TYPE_RIGHT_OUTER = 'RIGHT OUTER';
+    public const JOIN_TYPE_FULL_OUTER = 'FULL OUTER';
+
+    public const JOIN_TYPES = [
+        self::JOIN_TYPE_LEFT,
+        self::JOIN_TYPE_RIGHT,
+        self::JOIN_TYPE_INNER,
+        self::JOIN_TYPE_FULL,
+        self::JOIN_TYPE_LEFT_OUTER,
+        self::JOIN_TYPE_RIGHT_OUTER,
+        self::JOIN_TYPE_FULL_OUTER,
+    ];
+
     protected string $database = '';
     protected string $table = '';
     protected string $fromQuery = '';
@@ -21,6 +39,7 @@ abstract class Builder implements QueryBuilderContract
     protected string $groupByQuery = '';
     protected string $limitByQuery = '';
     protected array $withQueries = [];
+    protected array $joinQueries = [];
 
     public function selectRaw(string $statement): self
     {
@@ -44,10 +63,33 @@ abstract class Builder implements QueryBuilderContract
         $this->fromQuery = 'FROM "' . $database . '"."' . $table . '"';
 
         if ($alias) {
-            $this->fromQuery = Str::of($this->fromQuery)->append(" {$alias}");
+            $this->fromQuery = Str::of($this->fromQuery)->append(" AS {$alias}");
         }
 
         return $this;
+    }
+
+    public function join(string $database, string $table, string $type = 'LEFT', ?string $alias = null, ?string $on = null): Builder
+    {
+        if (!in_array($type, self::JOIN_TYPES)) {
+            throw new \InvalidArgumentException(sprintf('Invalid join type %s', $type));
+        }
+        $joinQuery = $type . ' JOIN "' . $database . '"."' . $table . '"';
+        if ($alias) {
+            $joinQuery = Str::of($joinQuery)->append(" AS {$alias}");
+        }
+
+        if ($on) {
+            $joinQuery = Str::of($joinQuery)->append(" ON {$on}");
+        }
+        $this->joinQueries = array_merge($this->joinQueries, [$joinQuery]);
+
+        return $this;
+    }
+
+    public function leftJoin(string $database, string $table, string $alias = null, string $on = null): self
+    {
+        return $this->join($database, $table, self::JOIN_TYPE_LEFT, $alias, $on);
     }
 
     public function fromRaw(string $statement): self
@@ -68,6 +110,13 @@ abstract class Builder implements QueryBuilderContract
     {
         $columns = func_get_args();
         $this->groupByQuery = sprintf('GROUP BY %s', implode(', ', $columns));
+
+        return $this;
+    }
+
+    public function whereRaw(string $statement): self
+    {
+        $this->whereQuery = $statement;
 
         return $this;
     }
@@ -253,7 +302,7 @@ abstract class Builder implements QueryBuilderContract
 
     public function limitBy(int $limit): self
     {
-        $this->limitByQuery = sprintf('LIMIT %s ', $limit);
+        $this->limitByQuery = sprintf('LIMIT %s', $limit);
 
         return $this;
     }
