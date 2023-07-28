@@ -67,6 +67,11 @@ trait BuildersConcern
         return $this->withQueries;
     }
 
+    public function getJoinQueries(): array
+    {
+        return $this->joinQueries;
+    }
+
     public function getQueryString(): string
     {
         if ($this->getWithQueries()) {
@@ -82,6 +87,13 @@ trait BuildersConcern
             $queryString = $queryString
                 ->append(' ')
                 ->append($this->getFromQuery());
+        }
+
+        if ($this->getJoinQueries()) {
+            $joinQueries = implode(' ', $this->getJoinQueries());
+            $queryString = $queryString
+                ->append(' ')
+                ->append($joinQueries);
         }
 
         if ($this->getWhereQuery()) {
