@@ -52,6 +52,11 @@ trait BuildersConcern
         return $this->orderByQuery;
     }
 
+    public function getHavingQuery(): string
+    {
+        return $this->havingQuery;
+    }
+
     public function getGroupByQuery(): string
     {
         return $this->groupByQuery;
@@ -106,6 +111,12 @@ trait BuildersConcern
             $queryString = $queryString
                 ->append(' ')
                 ->append($this->getGroupByQuery());
+        }
+
+        if ($this->getHavingQuery()) {
+            $queryString = $queryString
+                ->append(' ')
+                ->append($this->getHavingQuery());
         }
 
         if ($this->getOrderByQuery()) {

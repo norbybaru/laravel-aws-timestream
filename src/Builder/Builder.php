@@ -5,6 +5,7 @@ namespace NorbyBaru\AwsTimestream\Builder;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use NorbyBaru\AwsTimestream\Concerns\BuildersConcern;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
@@ -34,6 +35,7 @@ abstract class Builder implements QueryBuilderContract
     protected string $table = '';
     protected string $fromQuery = '';
     protected string $whereQuery = '';
+    protected string $havingQuery = '';
     protected string $selectStatement = '';
     protected string $orderByQuery = '';
     protected string $groupByQuery = '';
@@ -124,41 +126,53 @@ abstract class Builder implements QueryBuilderContract
     public function where(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
     {
         $query = Str::of($this->whereQuery);
+        $this->whereQuery = $this->modifyQueryPart('WHERE', $query, $column, $value, $operator, $boolean, $ago);
 
+        return $this;
+    }
+
+    protected function modifyQueryPart(
+        string $sqlPart,
+        Stringable $query,
+        string $column,
+        $value,
+        string $operator = '=',
+        string $boolean = 'and',
+        bool $ago = false
+    ): Stringable {
+        if (!in_array($sqlPart, ['WHERE', 'HAVING'])) {
+            throw new \InvalidArgumentException(sprintf('Invalid sql part %s', $sqlPart));
+        }
         $value = $value instanceof Closure
             // If the value is a Closure, it means the developer is performing an entire
             ? '(' . call_user_func($value) . ')'
             : $value;
 
         if ($query->length() == 0) {
-            $whereQuery = $query->append(
-                sprintf('WHERE %s %s %s', $column, $operator, $value)
+            $queryPart = $query->append(
+                sprintf($sqlPart . ' %s %s %s', $column, $operator, $value)
             );
 
             if ($ago) {
-                $whereQuery = $query->append(
-                    sprintf('WHERE %s %s ago(%s)', $column, $operator, $value)
+                $queryPart = $query->append(
+                    sprintf($sqlPart . ' %s %s ago(%s)', $column, $operator, $value)
                 );
             }
 
-            $this->whereQuery = $whereQuery;
-
-            return $this;
+            return $queryPart;
         }
 
-        $whereQuery = $query->append(
+        $queryPart = $query->append(
             sprintf(' %s %s %s %s', mb_strtoupper($boolean), $column, $operator, $value)
         );
 
         if ($ago) {
-            $whereQuery = $query->append(
+            $queryPart = $query->append(
                 sprintf(' %s %s %s ago(%s)', mb_strtoupper($boolean), $column, $operator, $value)
             );
         }
 
-        $this->whereQuery = $whereQuery;
-
-        return $this;
+        return $queryPart;
     }
 
     public function whereAgo(string $column, $value, string $operator = '=', string $boolean = 'and'): self
@@ -298,6 +312,21 @@ abstract class Builder implements QueryBuilderContract
     public function whereNotNull(string|array $columns, $boolean = 'and'): self
     {
         return $this->whereNull($columns, $boolean, true);
+    }
+
+    public function havingRaw(string $statement): self
+    {
+        $this->havingQuery = $statement;
+
+        return $this;
+    }
+
+    public function having(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
+    {
+        $query = Str::of($this->havingQuery);
+        $this->havingQuery = $this->modifyQueryPart('HAVING', $query, $column, $value, $operator, $boolean, $ago);
+
+        return $this;
     }
 
     public function limitBy(int $limit): self
