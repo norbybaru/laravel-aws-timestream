@@ -9,10 +9,10 @@ trait ConfigurableTrait
         return [
             'key' => env('AWS_TIMESTREAM_KEY'),
             'secret' => env('AWS_TIMESTREAM_SECRET'),
-            'database' => 'test-db',
+            'database' => env('AWS_TIMESTREAM_DATABASE', 'laravel-aws-timestream'),
             'tables' => [
                 'aliases' => [
-                    'test' => 'default',
+                    'test' => 'test',
                 ],
             ],
         ];
