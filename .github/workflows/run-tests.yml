@@ -57,5 +57,4 @@ jobs:
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit --testdox
         env:
-          AWS_TIMESTREAM_KEY: ${{ secrets.AWS_TIMESTREAM_KEY }}
-          AWS_TIMESTREAM_SECRET: ${{ secrets.AWS_TIMESTREAM_SECRET }}
+          AWS_TIMESTREAM_DATABASE: laravel-aws-timestream
