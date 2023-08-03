@@ -43,6 +43,7 @@ class TimestreamService
     private function ingest(array $payload): \Aws\Result
     {
         try {
+            dd($payload);
             $result = $this->writer->writeRecords($payload);
         } catch (TimestreamWriteException $e) {
             $records = $payload['Records'];
