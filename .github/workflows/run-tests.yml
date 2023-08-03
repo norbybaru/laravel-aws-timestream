@@ -10,6 +10,11 @@ on:
 
 jobs:
   build:
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
 
     strategy:
@@ -30,6 +35,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ env.AWS_ASSUME_ROLE }}
+          aws-region: eu-west-1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
