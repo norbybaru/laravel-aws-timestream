@@ -22,7 +22,17 @@ class TimestreamService
 {
     public TimestreamQueryClient $reader;
 
+    /**
+     * @return string|null
+     */
+    public function getNextToken(): ?string
+    {
+        return $this->nextToken;
+    }
+
     public TimestreamWriteClient $writer;
+
+    private ?string $nextToken = null;
 
     public function __construct(TimestreamManager $manager)
     {
@@ -71,14 +81,15 @@ class TimestreamService
 
     public function query(TimestreamReaderDto $timestreamReader): Collection
     {
-        return $this->runQuery($timestreamReader);
+        $params = $timestreamReader->toArray();
+
+        return $this->runQuery($params, $params['MaxRows'] ?? PHP_INT_MAX);
     }
 
-    private function runQuery(TimestreamReaderDto $timestreamReader, string $nextToken = null): Collection
+    private function runQuery($params, int $rowsLeft): Collection
     {
-        $params = $timestreamReader->toArray();
-        if ($nextToken) {
-            $params['NextToken'] = $nextToken;
+        if ($rowsLeft <= 0) {
+            return collect();
         }
 
         try {
@@ -87,8 +98,13 @@ class TimestreamService
             }
 
             $result = $this->reader->query($params);
-            if ($token = $result->get('NextToken')) {
-                return $this->runQuery($timestreamReader, $token);
+            $this->nextToken = $result->get('NextToken');
+            if ($this->nextToken !== null) {
+                $parsedRows = $this->parseQueryResult($result);
+                $rowsLeft -= $parsedRows->count();
+                $params['NextToken'] = $this->nextToken;
+                // we fetch everything recursively until the limit has been reached or there is no more data
+                return $this->runQuery($params, $rowsLeft)->merge($parsedRows);
             }
         } catch (TimestreamQueryException $e) {
             throw new FailTimestreamQueryException($e, $params);
