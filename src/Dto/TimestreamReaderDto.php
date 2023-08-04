@@ -6,6 +6,10 @@ use NorbyBaru\AwsTimestream\Builder\Builder;
 
 final class TimestreamReaderDto extends AbstractTimestreamDto
 {
+    private ?int $maxRows = null;
+
+    private string $nextTokenToContinueReading = '';
+
     public function __construct(protected Builder $builder, string $forTable = null)
     {
         $this->database = config('timestream.database');
@@ -37,8 +41,43 @@ final class TimestreamReaderDto extends AbstractTimestreamDto
 
     public function toArray(): array
     {
-        return [
+        $params = [
             'QueryString' => $this->getQueryString(),
         ];
+
+        if ($this->maxRows) {
+            $params['MaxRows'] = $this->maxRows;
+        }
+
+        // we can pass an initial next token to proceed previous queries
+        if ($this->nextTokenToContinueReading !== '') {
+            $params['NextToken'] = $this->nextTokenToContinueReading;
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param int|null $maxRows
+     *
+     * @return TimestreamReaderDto
+     */
+    public function setMaximumRowLimit(?int $maxRows): TimestreamReaderDto
+    {
+        $this->maxRows = $maxRows;
+
+        return $this;
+    }
+
+    /**
+     * @param string $nextTokenToContinueReading
+     *
+     * @return TimestreamReaderDto
+     */
+    public function setNextTokenToContinueReading(string $nextTokenToContinueReading): TimestreamReaderDto
+    {
+        $this->nextTokenToContinueReading = $nextTokenToContinueReading;
+
+        return $this;
     }
 }
