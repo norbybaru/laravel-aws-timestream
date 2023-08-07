@@ -28,12 +28,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::973932482043:role/github-actions/norbybaru-laravel-aws-timestream-role
-          aws-region: eu-west-1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -58,5 +52,11 @@ jobs:
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::973932482043:role/github-actions/norbybaru-laravel-aws-timestream-role
+          aws-region: eu-west-1
+
       - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --testdox
+        run: composer test
