@@ -61,7 +61,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::973932482043:role/github-actions/norbybaru-laravel-aws-timestream-role
+          role-to-assume: ${{ vars.AWS_ASSUME_ROLE }}
           aws-region: eu-west-1
 
       - name: Run PHPUnit tests
