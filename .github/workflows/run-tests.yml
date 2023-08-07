@@ -11,6 +11,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
 
     strategy:
       fail-fast: false
@@ -30,6 +34,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ vars.AWS_ASSUME_ROLE }}
+          aws-region: eu-west-1
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -55,8 +65,4 @@ jobs:
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
 
       - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --testdox
-        env:
-          AWS_TIMESTREAM_KEY: ${{ secrets.AWS_TIMESTREAM_KEY }}
-          AWS_TIMESTREAM_SECRET: ${{ secrets.AWS_TIMESTREAM_SECRET }}
-          AWS_TIMESTREAM_DATABASE: laravel-aws-timestream
+        run: composer test
