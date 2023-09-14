@@ -5,6 +5,7 @@ namespace NorbyBaru\AwsTimestream\Builder;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use NorbyBaru\AwsTimestream\Concerns\BuildersConcern;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
@@ -12,15 +13,35 @@ abstract class Builder implements QueryBuilderContract
 {
     use BuildersConcern;
 
+    public const JOIN_TYPE_LEFT = 'LEFT';
+    public const JOIN_TYPE_RIGHT = 'RIGHT';
+    public const JOIN_TYPE_INNER = 'INNER';
+    public const JOIN_TYPE_FULL = 'FULL';
+    public const JOIN_TYPE_LEFT_OUTER = 'LEFT OUTER';
+    public const JOIN_TYPE_RIGHT_OUTER = 'RIGHT OUTER';
+    public const JOIN_TYPE_FULL_OUTER = 'FULL OUTER';
+
+    public const JOIN_TYPES = [
+        self::JOIN_TYPE_LEFT,
+        self::JOIN_TYPE_RIGHT,
+        self::JOIN_TYPE_INNER,
+        self::JOIN_TYPE_FULL,
+        self::JOIN_TYPE_LEFT_OUTER,
+        self::JOIN_TYPE_RIGHT_OUTER,
+        self::JOIN_TYPE_FULL_OUTER,
+    ];
+
     protected string $database = '';
     protected string $table = '';
     protected string $fromQuery = '';
     protected string $whereQuery = '';
+    protected string $havingQuery = '';
     protected string $selectStatement = '';
     protected string $orderByQuery = '';
     protected string $groupByQuery = '';
     protected string $limitByQuery = '';
     protected array $withQueries = [];
+    protected array $joinQueries = [];
 
     public function selectRaw(string $statement): self
     {
@@ -44,10 +65,33 @@ abstract class Builder implements QueryBuilderContract
         $this->fromQuery = 'FROM "' . $database . '"."' . $table . '"';
 
         if ($alias) {
-            $this->fromQuery = Str::of($this->fromQuery)->append(" {$alias}");
+            $this->fromQuery = Str::of($this->fromQuery)->append(" AS {$alias}");
         }
 
         return $this;
+    }
+
+    public function join(string $database, string $table, string $type = 'LEFT', ?string $alias = null, ?string $on = null): Builder
+    {
+        if (!in_array($type, self::JOIN_TYPES)) {
+            throw new \InvalidArgumentException(sprintf('Invalid join type %s', $type));
+        }
+        $joinQuery = $type . ' JOIN "' . $database . '"."' . $table . '"';
+        if ($alias) {
+            $joinQuery = Str::of($joinQuery)->append(" AS {$alias}");
+        }
+
+        if ($on) {
+            $joinQuery = Str::of($joinQuery)->append(" ON {$on}");
+        }
+        $this->joinQueries = array_merge($this->joinQueries, [$joinQuery]);
+
+        return $this;
+    }
+
+    public function leftJoin(string $database, string $table, string $alias = null, string $on = null): self
+    {
+        return $this->join($database, $table, self::JOIN_TYPE_LEFT, $alias, $on);
     }
 
     public function fromRaw(string $statement): self
@@ -72,44 +116,63 @@ abstract class Builder implements QueryBuilderContract
         return $this;
     }
 
+    public function whereRaw(string $statement): self
+    {
+        $this->whereQuery = $statement;
+
+        return $this;
+    }
+
     public function where(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
     {
         $query = Str::of($this->whereQuery);
+        $this->whereQuery = $this->modifyQueryPart('WHERE', $query, $column, $value, $operator, $boolean, $ago);
 
+        return $this;
+    }
+
+    protected function modifyQueryPart(
+        string $sqlPart,
+        Stringable $query,
+        string $column,
+        $value,
+        string $operator = '=',
+        string $boolean = 'and',
+        bool $ago = false
+    ): Stringable {
+        if (!in_array($sqlPart, ['WHERE', 'HAVING'])) {
+            throw new \InvalidArgumentException(sprintf('Invalid sql part %s', $sqlPart));
+        }
         $value = $value instanceof Closure
             // If the value is a Closure, it means the developer is performing an entire
             ? '(' . call_user_func($value) . ')'
             : $value;
 
         if ($query->length() == 0) {
-            $whereQuery = $query->append(
-                sprintf('WHERE %s %s %s', $column, $operator, $value)
+            $queryPart = $query->append(
+                sprintf($sqlPart . ' %s %s %s', $column, $operator, $value)
             );
 
             if ($ago) {
-                $whereQuery = $query->append(
-                    sprintf('WHERE %s %s ago(%s)', $column, $operator, $value)
+                $queryPart = $query->append(
+                    sprintf($sqlPart . ' %s %s ago(%s)', $column, $operator, $value)
                 );
             }
 
-            $this->whereQuery = $whereQuery;
-
-            return $this;
+            return $queryPart;
         }
 
-        $whereQuery = $query->append(
+        $queryPart = $query->append(
             sprintf(' %s %s %s %s', mb_strtoupper($boolean), $column, $operator, $value)
         );
 
         if ($ago) {
-            $whereQuery = $query->append(
+            $queryPart = $query->append(
                 sprintf(' %s %s %s ago(%s)', mb_strtoupper($boolean), $column, $operator, $value)
             );
         }
 
-        $this->whereQuery = $whereQuery;
-
-        return $this;
+        return $queryPart;
     }
 
     public function whereAgo(string $column, $value, string $operator = '=', string $boolean = 'and'): self
@@ -251,9 +314,24 @@ abstract class Builder implements QueryBuilderContract
         return $this->whereNull($columns, $boolean, true);
     }
 
+    public function havingRaw(string $statement): self
+    {
+        $this->havingQuery = $statement;
+
+        return $this;
+    }
+
+    public function having(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
+    {
+        $query = Str::of($this->havingQuery);
+        $this->havingQuery = $this->modifyQueryPart('HAVING', $query, $column, $value, $operator, $boolean, $ago);
+
+        return $this;
+    }
+
     public function limitBy(int $limit): self
     {
-        $this->limitByQuery = sprintf('LIMIT %s ', $limit);
+        $this->limitByQuery = sprintf('LIMIT %s', $limit);
 
         return $this;
     }

@@ -52,6 +52,11 @@ trait BuildersConcern
         return $this->orderByQuery;
     }
 
+    public function getHavingQuery(): string
+    {
+        return $this->havingQuery;
+    }
+
     public function getGroupByQuery(): string
     {
         return $this->groupByQuery;
@@ -65,6 +70,11 @@ trait BuildersConcern
     public function getWithQueries(): array
     {
         return $this->withQueries;
+    }
+
+    public function getJoinQueries(): array
+    {
+        return $this->joinQueries;
     }
 
     public function getQueryString(): string
@@ -84,6 +94,13 @@ trait BuildersConcern
                 ->append($this->getFromQuery());
         }
 
+        if ($this->getJoinQueries()) {
+            $joinQueries = implode(' ', $this->getJoinQueries());
+            $queryString = $queryString
+                ->append(' ')
+                ->append($joinQueries);
+        }
+
         if ($this->getWhereQuery()) {
             $queryString = $queryString
                 ->append(' ')
@@ -94,6 +111,12 @@ trait BuildersConcern
             $queryString = $queryString
                 ->append(' ')
                 ->append($this->getGroupByQuery());
+        }
+
+        if ($this->getHavingQuery()) {
+            $queryString = $queryString
+                ->append(' ')
+                ->append($this->getHavingQuery());
         }
 
         if ($this->getOrderByQuery()) {
