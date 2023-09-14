@@ -159,6 +159,11 @@ public function ingest(TimestreamService $timestreamService)
 }
 ```
 
+# Run Unit Test
+```bash
+composer test
+```
+
 # Online Resources
 - https://docs.aws.amazon.com/timestream/latest/developerguide/what-is-timestream.html
 
