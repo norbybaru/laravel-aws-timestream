@@ -25,4 +25,4 @@ jobs:
 
             If you are implementing a feature request, please check with the maintainers that the feature will be accepted first.
 
-            For any PR make sure to include test coverage. Run command `composer test` 
+            For any PR make sure to include test coverage. Run command `composer test`
