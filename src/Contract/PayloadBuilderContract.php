@@ -2,8 +2,6 @@
 
 namespace NorbyBaru\AwsTimestream\Contract;
 
-use Illuminate\Support\Carbon;
-
 interface PayloadBuilderContract
 {
     public static function make(string $measureName): self;

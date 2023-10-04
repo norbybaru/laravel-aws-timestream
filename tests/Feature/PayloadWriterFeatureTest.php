@@ -15,8 +15,6 @@ class PayloadWriterFeatureTest extends TestCase
 {
     /**
      * Writing of Multi-measure attributes
-     *
-     * @return void
      */
     public function test_it_should_ingest_multi_measure_records()
     {
@@ -38,7 +36,7 @@ class PayloadWriterFeatureTest extends TestCase
             $payload->setTime(Carbon::now()->subMilliseconds($index * 50));
             $records = [
                 ...$records,
-                ...$payload->toArray()
+                ...$payload->toArray(),
             ];
 
             if (count($records) === 100) {
@@ -53,11 +51,8 @@ class PayloadWriterFeatureTest extends TestCase
         }
     }
 
-
     /**
      * Writing of single record attributes
-     *
-     * @return void
      */
     public function test_it_should_ingest_single_measure_record()
     {
@@ -78,8 +73,6 @@ class PayloadWriterFeatureTest extends TestCase
 
     /**
      * Writing batches of records with common attributes
-     * 
-     * @return void
      */
     public function test_it_should_batch_ingest_data()
     {

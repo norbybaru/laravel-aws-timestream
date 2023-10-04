@@ -36,14 +36,14 @@ class CommonPayloadBuilder
     public function setCommonTime(Carbon $time): self
     {
         $this->commonAttributes['Time'] = $this->getPreciseTime($time);
-        
+
         return $this;
     }
 
     public function setCommonVersion(int $version): self
     {
         $this->commonAttributes['Version'] = $version;
-        
+
         return $this;
     }
 
@@ -52,7 +52,7 @@ class CommonPayloadBuilder
         $common = [];
         if ($this->commonDimensions) {
             $common = [
-                'Dimensions' => $this->commonDimensions
+                'Dimensions' => $this->commonDimensions,
             ];
         }
 

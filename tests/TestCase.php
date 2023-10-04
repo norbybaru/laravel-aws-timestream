@@ -49,7 +49,7 @@ abstract class TestCase extends OrchestraTestCase
             TimestreamServiceProvider::class,
         ];
     }
-    
+
     /**
      * @param string $filePath
      *

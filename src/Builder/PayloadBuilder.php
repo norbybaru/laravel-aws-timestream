@@ -75,7 +75,7 @@ final class PayloadBuilder implements PayloadBuilderContract
         $this->measureValues[] = [
             'Name' => $name,
             'Value' => $value,
-            'Type' => $type->value
+            'Type' => $type->value,
         ];
 
         return $this;

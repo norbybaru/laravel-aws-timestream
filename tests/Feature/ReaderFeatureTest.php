@@ -2,10 +2,10 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Feature;
 
+use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
 use NorbyBaru\AwsTimestream\TimestreamService;
-use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 
 class ReaderFeatureTest extends TestCase
 {
@@ -18,7 +18,7 @@ class ReaderFeatureTest extends TestCase
             ->orderBy('time', 'desc');
 
         $reader = TimestreamReaderDto::make($queryBuilder);
-        
+
         /** @var TimestreamService */
         $timestreamService = app(TimestreamService::class);
         $result = $timestreamService->query($reader);

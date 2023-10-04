@@ -87,6 +87,7 @@ class TimestreamService
             if ($nextToken = $result->get('NextToken')) {
                 $parsedRows = $this->parseQueryResult($result);
                 $params['NextToken'] = $nextToken;
+
                 return $this->runQuery($params)->merge($parsedRows);
             }
         } catch (TimestreamQueryException $e) {
