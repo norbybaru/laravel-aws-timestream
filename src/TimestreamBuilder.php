@@ -20,7 +20,7 @@ class TimestreamBuilder
                     $metric['measure_value'],
                     $metric['time'],
                     $metric['measure_value_type'] ?? 'VARCHAR',
-                    $metric['dimensions']
+                    $metric['dimensions'] ?? []
                 )->toArray(true)
             )->all();
     }
