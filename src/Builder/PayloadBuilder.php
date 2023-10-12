@@ -70,12 +70,12 @@ final class PayloadBuilder implements PayloadBuilderContract
         return $this;
     }
 
-    public function setMultiMeasuresValues(string $name, mixed $value, ValueTypeEnum $type = ValueTypeEnum::VARCHAR): self
+    public function setMultiMeasuresValues(string $name, mixed $value, ?ValueTypeEnum $type = null): self
     {
         $this->measureValues[] = [
             'Name' => $name,
             'Value' => $value,
-            'Type' => $type->value,
+            'Type' => $type?->value ?? ValueTypeEnum::VARCHAR()->value,
         ];
 
         return $this;

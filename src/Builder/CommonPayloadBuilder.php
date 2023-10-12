@@ -20,7 +20,7 @@ class CommonPayloadBuilder
         $this->commonDimensions[] = [
             'Name' => $name,
             'Value' => $value,
-            'DimensionValueType' => ValueTypeEnum::VARCHAR->value,
+            'DimensionValueType' => ValueTypeEnum::VARCHAR()->value,
         ];
 
         return $this;

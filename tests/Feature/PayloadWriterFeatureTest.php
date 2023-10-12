@@ -29,7 +29,8 @@ class PayloadWriterFeatureTest extends TestCase
                 ->setDimensions(name: $data[2], value: $data[3])
                 ->setDimensions(name: $data[4], value: $data[5])
                 ->setMultiMeasuresValues(name: $data[6], value: $data[7], type: ValueTypeEnum::from($data[8]))
-                ->setMultiMeasuresValues(name: $data[9], value: $data[10], type: ValueTypeEnum::from($data[11]));
+                ->setMultiMeasuresValues(name: $data[9], value: $data[10], type: ValueTypeEnum::from($data[11]))
+                ->setMultiMeasuresValues(name: 'agent', value: $this->faker->userAgent, type: ValueTypeEnum::VARCHAR());
 
             $payload->setVersion(Carbon::now()->subMilliseconds($index * 50)->timestamp);
 
@@ -90,7 +91,7 @@ class PayloadWriterFeatureTest extends TestCase
         $common = CommonPayloadBuilder::make()
             ->setCommonDimensions(name: 'processor', value: $this->faker->linuxProcessor)
             ->setCommonDimensions(name: 'mac_address', value: $this->faker->macAddress)
-            ->setCommonMeasureValueType(ValueTypeEnum::VARCHAR)
+            ->setCommonMeasureValueType(ValueTypeEnum::VARCHAR())
             ->setCommonTime(Carbon::now())
             ->toArray();
 
