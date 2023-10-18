@@ -16,7 +16,7 @@ class TimestreamPayloadBuilder
     protected ?Carbon $time = null;
 
     public function __construct(
-        protected string $measureName, 
+        protected string $measureName,
         protected mixed $measureValue = null,
         protected ?ValueTypeEnum $measureValueType = null
     ) {
@@ -90,7 +90,7 @@ class TimestreamPayloadBuilder
 
     public static function make(string $measureName): self
     {
-        return new self($measureName);   
+        return new self($measureName);
     }
 
     public function toArray(): array

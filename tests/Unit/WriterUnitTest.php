@@ -3,13 +3,13 @@
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
 use Illuminate\Support\Carbon;
+use NorbyBaru\AwsTimestream\Builder\CommonPayloadBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamPayloadBuilder;
+use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Enum\ValueTypeEnum;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
-use NorbyBaru\AwsTimestream\Enum\ValueTypeEnum;
-use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
-use NorbyBaru\AwsTimestream\Builder\CommonPayloadBuilder;
-use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
-use NorbyBaru\AwsTimestream\Builder\TimestreamPayloadBuilder;
 
 class WriterUnitTest extends TestCase
 {
@@ -240,7 +240,6 @@ class WriterUnitTest extends TestCase
         $this->assertArrayHasKey('Records', $payload);
         $this->assertArrayHasKey('TableName', $payload);
 
-
         $payload = [
             ...TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
@@ -326,7 +325,7 @@ class WriterUnitTest extends TestCase
         $payload = $timestreamWriter->toArray();
 
         $this->assertArrayHasKey('CommonAttributes', $payload);
-        $commonAttributes =  $payload['CommonAttributes'];
+        $commonAttributes = $payload['CommonAttributes'];
 
         $this->assertArrayHasKey('MeasureValueType', $commonAttributes);
         $this->assertArrayHasKey('Time', $commonAttributes);
