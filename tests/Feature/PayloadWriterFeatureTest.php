@@ -4,25 +4,25 @@ namespace NorbyBaru\AwsTimestream\Tests\Feature;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
-use NorbyBaru\AwsTimestream\Builder\CommonPayloadBuilder;
-use NorbyBaru\AwsTimestream\Builder\PayloadBuilder;
-use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
-use NorbyBaru\AwsTimestream\Enum\ValueTypeEnum;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamService;
+use NorbyBaru\AwsTimestream\Enum\ValueTypeEnum;
+use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Builder\CommonPayloadBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamPayloadBuilder;
 
 class PayloadWriterFeatureTest extends TestCase
 {
     /**
      * Writing of Multi-measure attributes
      */
-    public function test_it_should_ingest_multi_measure_records()
+    public function it_should_ingest_multi_measure_records()
     {
         $filePath = __DIR__ . "/../Fixtures/data/sample.csv";
         $records = [];
         foreach ($this->readCSV($filePath) as $index => $row) {
             $data = explode(";", $row[0]);
-            $payload = PayloadBuilder::make(measureName: 'metric');
+            $payload = TimestreamPayloadBuilder::make(measureName: 'metric');
 
             $payload
                 ->setDimensions(name: $data[0], value: $data[1])
@@ -37,7 +37,7 @@ class PayloadWriterFeatureTest extends TestCase
             $payload->setTime(Carbon::now()->subMilliseconds($index * 50));
             $records = [
                 ...$records,
-                ...$payload->toArray(),
+                ...$payload->toRecords(),
             ];
 
             if (count($records) === 100) {
@@ -57,19 +57,19 @@ class PayloadWriterFeatureTest extends TestCase
      */
     public function test_it_should_ingest_single_measure_record()
     {
-        $payload = PayloadBuilder::make(measureName: 'device')
+        $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $this->faker->randomDigit)
             ->setDimensions(name: "mac_address", value: $this->faker->macAddress)
             ->setDimensions(name: "ref", value: $this->faker->uuid)
             ->setTime(Carbon::now());
 
-        $timestreamWriter = TimestreamWriterDto::make($payload->toArray())->forTable('test');
+        $timestreamWriter = TimestreamWriterDto::make($payload->toRecords())->forTable('test');
 
         /** @var TimestreamService */
         $timestreamService = app(TimestreamService::class);
         $result = $timestreamService->write($timestreamWriter);
 
-        $this->assertAwsResults($result, count($payload->toArray()));
+        $this->assertAwsResults($result, count($payload->toRecords()));
     }
 
     /**
@@ -78,14 +78,14 @@ class PayloadWriterFeatureTest extends TestCase
     public function test_it_should_batch_ingest_data()
     {
         $payloads = [
-            ...PayloadBuilder::make(measureName: 'cpu_usage')
+            ...TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
-                ->toArray(),
-            ...PayloadBuilder::make(measureName: 'memory_usage')
+                ->toRecords(),
+            ...TimestreamPayloadBuilder::make(measureName: 'memory_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
-                ->toArray(),
+                ->toRecords(),
         ];
 
         $common = CommonPayloadBuilder::make()
