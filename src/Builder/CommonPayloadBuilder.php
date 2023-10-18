@@ -56,10 +56,10 @@ class CommonPayloadBuilder
             ];
         }
 
-        return [
-            ...$this->commonAttributes,
-            ...$common,
-        ];
+        return array_merge(
+            $this->commonAttributes,
+            $common
+        );
     }
 
     private function getPreciseTime(Carbon $time): string
