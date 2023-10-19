@@ -2,6 +2,7 @@
 
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
+use Illuminate\Support\Carbon;
 use NorbyBaru\AwsTimestream\Builder\Builder;
 use NorbyBaru\AwsTimestream\Builder\TimestreamQueryBuilder;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
@@ -9,6 +10,21 @@ use NorbyBaru\AwsTimestream\TimestreamBuilder;
 
 class QueryBuilderUnitTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        TimestreamQueryBuilder::macro(
+            "whereDateBetween",
+            fn ($from, $to) => $this->whereBetween('date', [$from, $to])
+        );
+
+        TimestreamQueryBuilder::macro(
+            "whereHoursAgo",
+            fn (string $column, int $hours, string $operator = '=') => $this->whereAgo($column, "{$hours}h", $operator)
+        );
+
+        parent::setUp();
+    }
+
     public function test_it_can_return_query_builder()
     {
         $this->assertInstanceOf(Builder::class, TimestreamBuilder::query());
@@ -72,6 +88,21 @@ class QueryBuilderUnitTest extends TestCase
             ->whereIn('state', ['open', 'draft', 'published']);
 
         $this->validateSql("WHERE state IN ('open','draft','published')", $query);
+    }
+
+    public function test_it_should_build_query_from_marco()
+    {
+        $dateFrom = Carbon::now()->yesterday()->toDateString();
+        $dateTo = Carbon::now()->toDateString();
+        $query = TimestreamBuilder::query()
+            ->whereIn('state', ['open', 'draft', 'published'])
+            ->whereDateBetween($dateFrom, $dateTo)
+            ->whereHoursAgo('time', 72);
+
+        $this->validateSql(
+            "WHERE state IN ('open','draft','published') AND date BETWEEN {$dateFrom} and {$dateTo} AND time = ago(72h)",
+            $query
+        );
     }
 
     private function validateSql(string $expected, TimestreamQueryBuilder $builder)
