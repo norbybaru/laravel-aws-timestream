@@ -11,8 +11,8 @@ use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
 abstract class Builder implements QueryBuilderContract
 {
-    use BuildersConcern; 
-    Use Macroable;
+    use BuildersConcern;
+    use Macroable;
 
     protected string $database = '';
     protected string $table = '';
