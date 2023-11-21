@@ -33,7 +33,6 @@ class ReaderFeatureTest extends TestCase
         $queryBuilder = TimestreamBuilder::query()
             ->select('*')
             ->from(config('timestream.database'), 'test')
-            ->whereAgo('time', '48h', '>=')
             ->orderBy('time', 'desc')
             ->limitBy($max);
 
