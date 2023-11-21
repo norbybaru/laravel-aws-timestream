@@ -71,24 +71,24 @@ class TimestreamService
 
     public function query(TimestreamReaderDto $timestreamReader): Collection
     {
-        return $this->runQuery($timestreamReader);
+        return $this->runQuery($timestreamReader->toArray());
     }
 
-    private function runQuery(TimestreamReaderDto $timestreamReader, string $nextToken = null): Collection
+    private function runQuery(array $params): Collection
     {
-        $params = $timestreamReader->toArray();
-        if ($nextToken) {
-            $params['NextToken'] = $nextToken;
-        }
-
         try {
             if ($this->shouldDebugQuery()) {
                 Log::debug('=== Timestream Query ===', $params);
             }
 
             $result = $this->reader->query($params);
-            if ($token = $result->get('NextToken')) {
-                return $this->runQuery($timestreamReader, $token);
+
+            // fetch everything recursively until the limit has been reached or there is no more data
+            if ($nextToken = $result->get('NextToken')) {
+                $parsedRows = $this->parseQueryResult($result);
+                $params['NextToken'] = $nextToken;
+
+                return $this->runQuery($params)->merge($parsedRows);
             }
         } catch (TimestreamQueryException $e) {
             throw new FailTimestreamQueryException($e, $params);

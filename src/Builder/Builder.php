@@ -5,12 +5,14 @@ namespace NorbyBaru\AwsTimestream\Builder;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use NorbyBaru\AwsTimestream\Concerns\BuildersConcern;
 use NorbyBaru\AwsTimestream\Contract\QueryBuilderContract;
 
 abstract class Builder implements QueryBuilderContract
 {
     use BuildersConcern;
+    use Macroable;
 
     protected string $database = '';
     protected string $table = '';

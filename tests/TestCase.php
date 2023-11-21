@@ -49,4 +49,20 @@ abstract class TestCase extends OrchestraTestCase
             TimestreamServiceProvider::class,
         ];
     }
+
+    /**
+     * @param string $filePath
+     *
+     * @return \Generator
+     */
+    protected function readCSV(string $filePath): \Generator
+    {
+        $handle = fopen($filePath, "r");
+
+        while (!feof($handle)) {
+            yield fgetcsv($handle, 5000);
+        }
+
+        fclose($handle);
+    }
 }
