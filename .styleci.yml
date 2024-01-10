@@ -2,6 +2,7 @@ preset: psr12
 version: 8.3
 enabled:
   - alpha_ordered_imports
+  - binary_operator_spaces
   - blank_line_before_return
   - cast_spaces
   - hash_to_slash_comment
