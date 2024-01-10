@@ -6,11 +6,12 @@
 AWS Timestream is a fast, scalable, and serverless time series database service.
 This package is an opinionated implementation to query timestream and ingest data into timestream.
 
-It provides a query builder class which has common timeseries sql function. This was inspired by Laravel Eloquent ORM. 
-See supported query functions `NorbyBaru\AwsTimestream\Contract\QueryBuilderContract`
+## Upgrading from version `0.2.x`
 
-It also provide a payload builder class to format your data correctly to ingest into timestream. 
-See `NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract`
+Please not that version `0.3.x` is still backward compatible with version `0.2.x`. 
+No breaking changes introduced, however i will suggest you slowly use the new Payload builder approach for Timestream ingestion as from version `0.4.x` we shall drop support for legacy builder.
+
+See updated examples below start using new approach with `TimestreamPayloadBuilder`.
 
 ## Install
 ```bash
@@ -22,8 +23,8 @@ composer require norbybaru/laravel-aws-timestream
 ```bash
 php artisan vendor:publish --provider="NorbyBaru\AwsTimestream\TimestreamServiceProvider" --tag="timestream-config"
 ```
-- Open `timestream.php` config file and setup your databse name and tables
-- Setup you AWS Timestream keys and permissions with the following enviroment variable
+- Open `timestream.php` config file and setup your database name and tables
+- Setup you AWS Timestream keys and permissions with the following environment variable
 ```
 AWS_TIMESTREAM_KEY=
 AWS_TIMESTREAM_SECRET=
@@ -82,37 +83,29 @@ public function overview(TimestreamService $timestreamService)
 }
 ```
 ### Timestream Ingestion
-We need to build our payload that Timestream will accept for ingestion.
+We need to build our ingestion payload that Timestream will accept for ingestion.
+To achieve that we can use the `TimestreamPayloadBuilder` class to build a payload that Aws Timestream will understand
 
-1. Use `TimestreamBuilder` to build ingestion payload
+#### Example
+1. Build single record ingestion payload
 ```php
 <?php
 
 use NorbyBaru\AwsTimestream\TimestreamService;
 use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
-use NorbyBaru\AwsTimestream\TimestreamBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamPayloadBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {
-    $metrics = [
-        'measure_name' => 'cpu_usage',
-        'measure_value' => 80,
-        'time' => Carbon::now(),
-        'dimensions' => [
-            'mac_address' => 'randomstring',
-            'ref' => 'refs',
-        ],
-    ];
+    $payload = TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
+        ->setMeasureValue(value: 80.5)
+        ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+        ->setDimensions(name: "mac_address", value: '00:11:22:AA:BB:CC ')
+        ->setDimensions(name: "ref", value: 'station a')
+        ->setTime(Carbon::now());
 
-    $payload = TimestreamBuilder::payload(
-        $metrics['measure_name'],
-        $metrics['measure_value'],
-        $metrics['time'],
-        'VARCHAR',
-        $metrics['dimensions'],
-    )->toArray();
+    $timestreamWriter = TimestreamWriterDto::make($payload->toRecords())->forTable('table-name');
 
-    $timestreamWriter = TimestreamWriterDto::make($payload)->forTable('table-name');
     return $timestreamService->write($timestreamWriter);
 }
 ```
@@ -124,37 +117,31 @@ public function ingest(TimestreamService $timestreamService)
 
 use NorbyBaru\AwsTimestream\TimestreamService;
 use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
-use NorbyBaru\AwsTimestream\Support\TimestreamPayloadBuilder;
+use NorbyBaru\AwsTimestream\Builder\TimestreamPayloadBuilder;
 
 public function ingest(TimestreamService $timestreamService)
 {
-    $metrics = [
-        [
-            'measure_name' => 'cpu_usage',
-            'measure_value' => 80,
-            'time' => Carbon::now(),
-            'dimensions' => [
-                'ref' => 'ref_1',
-            ],
-        ],
-        [
-            'measure_name' => 'memory_usage',
-            'measure_value' => 20,
-            'time' => Carbon::now(),
-            'dimensions' => [
-                'ref' => 'ref_2',
-            ],
-        ]
+    $payloads = [
+        ...TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
+            ->setMeasureValue(value: 80.6)
+            ->setDimensions(name: "ref", value: 'station a')
+            ->toRecords(),
+        ...TimestreamPayloadBuilder::make(measureName: 'memory_usage')
+            ->setMeasureValue(value: 45.5)
+            ->setDimensions(name: "ref", value: 'station b')
+            ->toRecords(),
     ];
 
-    $commonAttributes['device_name'] = 'device_1';
-    $commonAttributes['mac_address'] = 'randomstring';
+    $common = CommonPayloadBuilder::make()
+        ->setCommonDimensions(name: 'processor', value: 'unix')
+        ->setCommonDimensions(name: 'mac_address', value: '00:11:22:AA:BB:CC')
+        ->setCommonDimensions(name: 'device_name', value: 'device_1')
+        ->setCommonMeasureValueType(ValueTypeEnum::DOUBLE())
+        ->setCommonTime(Carbon::now())
+        ->toArray();
 
-    $payload = TimestreamBuilder::batchPayload($metrics);
+    $timestreamWriter = TimestreamWriterDto::make($payloads, $common, 'table-name');
 
-    $common = TimestreamBuilder::commonAttributes($commonAttributes);
-
-    $timestreamWriter = TimestreamWriterDto::make($payload, $common, 'table-name');
     return $timestreamService->write($timestreamWriter);
 }
 ```
@@ -166,4 +153,6 @@ composer test
 
 # Online Resources
 - https://docs.aws.amazon.com/timestream/latest/developerguide/what-is-timestream.html
+- https://docs.aws.amazon.com/timestream/latest/developerguide/writes.html
+- https://docs.aws.amazon.com/timestream/latest/developerguide/queries.html
 
