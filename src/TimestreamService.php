@@ -143,11 +143,11 @@ class TimestreamService
         }
 
         $return = match ($type) {
-            ValueTypeEnum::BIGINT() => (int) $value,
-            ValueTypeEnum::BOOLEAN() => (bool) $value,
-            ValueTypeEnum::VARCHAR() => (string) $value,
-            ValueTypeEnum::DOUBLE() => (float) $value,
-            ValueTypeEnum::TIMESTAMP() => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
+            ValueTypeEnum::BIGINT()->value => (int) $value,
+            ValueTypeEnum::BOOLEAN()->value => (bool) $value,
+            ValueTypeEnum::VARCHAR()->value => (string) $value,
+            ValueTypeEnum::DOUBLE()->value => (float) $value,
+            ValueTypeEnum::TIMESTAMP()->value => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
             default => throw new UnknownTimestreamDataTypeException('Unknown Data Type From TimeStream: ' . $type),
         };
 
