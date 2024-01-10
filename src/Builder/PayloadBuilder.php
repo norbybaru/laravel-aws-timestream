@@ -18,6 +18,8 @@ final class PayloadBuilder implements PayloadBuilderContract
     ) {
         if ($dimensions) {
             collect($dimensions)->each(fn ($value, $key) => $this->buildDimensions($key, $value));
+        } else {
+            $this->dimensions = [];
         }
     }
 
