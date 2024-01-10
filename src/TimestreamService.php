@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 use NorbyBaru\AwsTimestream\Dto\TimestreamWriterDto;
+use NorbyBaru\AwsTimestream\Enum\ValueTypeEnum;
 use NorbyBaru\AwsTimestream\Exception\FailTimestreamQueryException;
 use NorbyBaru\AwsTimestream\Exception\FailTimestreamWriterException;
 use NorbyBaru\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
@@ -142,10 +143,11 @@ class TimestreamService
         }
 
         $return = match ($type) {
-            'BIGINT' => (int) $value,
-            'VARCHAR' => (string) $value,
-            'DOUBLE' => (float) $value,
-            'TIMESTAMP' => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
+            ValueTypeEnum::BIGINT()->value => (int) $value,
+            ValueTypeEnum::BOOLEAN()->value => (bool) $value,
+            ValueTypeEnum::VARCHAR()->value => (string) $value,
+            ValueTypeEnum::DOUBLE()->value => (float) $value,
+            ValueTypeEnum::TIMESTAMP()->value => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
             default => throw new UnknownTimestreamDataTypeException('Unknown Data Type From TimeStream: ' . $type),
         };
 
