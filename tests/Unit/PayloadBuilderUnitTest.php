@@ -19,7 +19,6 @@ class PayloadBuilderUnitTest extends TestCase
             'DOUBLE'
         );
 
-
         try {
             $metric = $payloadBuilder->toArray(true);
         } catch (\Exception $e) {
