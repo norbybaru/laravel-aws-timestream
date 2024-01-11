@@ -7,7 +7,7 @@ use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
 
 final class PayloadBuilder implements PayloadBuilderContract
 {
-    protected array $dimensions;
+    protected array $dimensions = [];
 
     public function __construct(
         protected string $measureName,
@@ -18,8 +18,6 @@ final class PayloadBuilder implements PayloadBuilderContract
     ) {
         if ($dimensions) {
             collect($dimensions)->each(fn ($value, $key) => $this->buildDimensions($key, $value));
-        } else {
-            $this->dimensions = [];
         }
     }
 
