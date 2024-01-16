@@ -7,7 +7,7 @@ use NorbyBaru\AwsTimestream\Contract\PayloadBuilderContract;
 
 final class PayloadBuilder implements PayloadBuilderContract
 {
-    protected array $dimensions;
+    protected array $dimensions = [];
 
     public function __construct(
         protected string $measureName,
