@@ -19,11 +19,7 @@ class PayloadBuilderUnitTest extends TestCase
             'DOUBLE'
         );
 
-        try {
-            $metric = $payloadBuilder->toArray(true);
-        } catch (\Exception $e) {
-            $this->fail($e->getMessage());
-        }
+        $metric = $payloadBuilder->toArray(true);
 
         $this->assertIsArray($metric);
         $this->assertArrayHasKey('MeasureName', $metric);
@@ -33,7 +29,7 @@ class PayloadBuilderUnitTest extends TestCase
         $this->assertArrayHasKey('Dimensions', $metric);
 
         $this->assertEquals('test', $metric['MeasureName']);
-        $this->assertEquals('1', $metric['MeasureValue']);
+        $this->assertEquals(1, $metric['MeasureValue']);
         $this->assertEquals('DOUBLE', $metric['MeasureValueType']);
         $this->assertEquals("1704988157000", $metric['Time']);
         $this->assertEmpty($metric['Dimensions']);
