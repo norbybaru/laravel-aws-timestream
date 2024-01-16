@@ -46,7 +46,7 @@ final class PayloadBuilder implements PayloadBuilderContract
                 return [
                     'DimensionValueType' => 'VARCHAR',
                     'Name' => $key,
-                    'Value' => $value,
+                    'Value' => (string) $value,
                 ];
             })
             ->values()
