@@ -32,7 +32,7 @@
     "require": {
         "php": "^8.0",
         "aws/aws-sdk-php": "^3.209",
-        "illuminate/support": "^8.0|^9.52|^10.0",
+        "illuminate/support": "^8.0|^9.52|^10.0|^11.0",
         "spatie/enum": "^3.13"
     },
     "minimum-stability": "dev",
