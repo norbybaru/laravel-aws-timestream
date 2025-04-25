@@ -60,7 +60,7 @@ abstract class TestCase extends OrchestraTestCase
         $handle = fopen($filePath, "r");
 
         while (!feof($handle)) {
-            yield fgetcsv($handle, 5000);
+            yield fgetcsv($handle, 300);
         }
 
         fclose($handle);

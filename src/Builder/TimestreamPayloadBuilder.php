@@ -55,7 +55,7 @@ class TimestreamPayloadBuilder
         $this->measureValues[] = [
             'Name' => $name,
             'Value' => $value,
-            'Type' => $type?->value ?? ValueTypeEnum::VARCHAR()->value,
+            'Type' => $type->value ?? ValueTypeEnum::VARCHAR()->value,
         ];
 
         return $this;

@@ -40,6 +40,7 @@ class PayloadWriterFeatureTest extends TestCase
                 ...$payload->toRecords(),
             ];
 
+            // Write in batches of 100
             if (count($records) === 100) {
                 $timestreamWriter = TimestreamWriterDto::make($records)->forTable('test');
 
