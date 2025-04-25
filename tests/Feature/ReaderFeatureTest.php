@@ -29,7 +29,7 @@ class ReaderFeatureTest extends TestCase
 
     public function test_it_should_return_paginated_results()
     {
-        $max = 5000;
+        $max = 300;
         $queryBuilder = TimestreamBuilder::query()
             ->select('*')
             ->from(config('timestream.database'), 'test')

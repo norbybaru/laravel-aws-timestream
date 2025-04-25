@@ -1,34 +1,32 @@
 name: Run Unit Tests
 
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    # These permissions are needed to interact with GitHub's OIDC Token endpoint.
+    permissions:
+      id-token: write
+      contents: read
 
     strategy:
       fail-fast: false
       matrix:
-        php: [ 8.0, 8.1, 8.2, 8.3, 8.4 ]
-        laravel: [ 9.*, 10.*, 11.*, 12.* ]
-        dependency-version: [ prefer-lowest, prefer-stable ]
+        php: [8.1, 8.2, 8.3, 8.4]
+        laravel: [10.*, 11.*, 12.*]
+        dependency-version: [prefer-lowest, prefer-stable]
         exclude:
-          - laravel: 9.*
-            php: 8.3
-          - laravel: 9.*
-            php: 8.4
-          - laravel: 10.*
-            php: 8.0
           - laravel: 10.*
             php: 8.4
-          - laravel: 11.*
-            php: 8.0
           - laravel: 11.*
             php: 8.1
           - laravel: 11.*
             php: 8.4
-          - laravel: 12.*
-            php: 8.0
           - laravel: 12.*
             php: 8.1
 
@@ -37,6 +35,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        if:  github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ASSUME_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -60,6 +65,12 @@ jobs:
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
           composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
-
+      
       - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --testsuite Unit
+        if: github.event_name == 'pull_request'
+        run: composer test:unit
+  
+      - name: Run PHPUnit tests
+        if:  github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: composer test
+
