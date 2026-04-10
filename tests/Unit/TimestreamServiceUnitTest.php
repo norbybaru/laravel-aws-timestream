@@ -75,6 +75,25 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertEquals('2024-03-15 10:30:45', $timestampResult->format('Y-m-d H:i:s'));
     }
 
+    public function test_it_should_return_null_for_null_values()
+    {
+        // Test that null values return null regardless of type
+        $bigintResult = $this->invokeProtectedMethod($this->service, 'dataType', ['BIGINT', null]);
+        $this->assertNull($bigintResult);
+
+        $booleanResult = $this->invokeProtectedMethod($this->service, 'dataType', ['BOOLEAN', null]);
+        $this->assertNull($booleanResult);
+
+        $varcharResult = $this->invokeProtectedMethod($this->service, 'dataType', ['VARCHAR', null]);
+        $this->assertNull($varcharResult);
+
+        $doubleResult = $this->invokeProtectedMethod($this->service, 'dataType', ['DOUBLE', null]);
+        $this->assertNull($doubleResult);
+
+        $timestampResult = $this->invokeProtectedMethod($this->service, 'dataType', ['TIMESTAMP', null]);
+        $this->assertNull($timestampResult);
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
