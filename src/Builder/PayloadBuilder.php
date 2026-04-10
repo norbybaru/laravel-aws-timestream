@@ -17,7 +17,9 @@ final class PayloadBuilder implements PayloadBuilderContract
         array $dimensions = []
     ) {
         if ($dimensions) {
-            collect($dimensions)->each(fn ($value, $key) => $this->buildDimensions($key, $value));
+            foreach ($dimensions as $key => $value) {
+                $this->buildDimensions($key, $value);
+            }
         }
     }
 
