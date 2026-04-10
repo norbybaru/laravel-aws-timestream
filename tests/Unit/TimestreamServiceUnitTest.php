@@ -542,7 +542,7 @@ class TimestreamServiceUnitTest extends TestCase
 
     /**
      * Helper method to invoke protected/private methods for testing
-     * 
+     *
      * @param mixed $object
      */
     private function invokeProtectedMethod($object, string $methodName, array $parameters = [])
