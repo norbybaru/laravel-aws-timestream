@@ -17,7 +17,9 @@ final class PayloadBuilder implements PayloadBuilderContract
         array $dimensions = []
     ) {
         if ($dimensions) {
-            collect($dimensions)->each(fn ($value, $key) => $this->buildDimensions($key, $value));
+            foreach ($dimensions as $key => $value) {
+                $this->buildDimensions($key, $value);
+            }
         }
     }
 
@@ -41,16 +43,13 @@ final class PayloadBuilder implements PayloadBuilderContract
 
     public static function buildCommonAttributes(array $attributes): array
     {
-        $metrics = collect($attributes)
-            ->map(function ($value, $key) {
-                return [
-                    'DimensionValueType' => 'VARCHAR',
-                    'Name' => $key,
-                    'Value' => (string) $value,
-                ];
-            })
-            ->values()
-            ->all();
+        $metrics = array_map(function ($key, $value) {
+            return [
+                'DimensionValueType' => 'VARCHAR',
+                'Name' => $key,
+                'Value' => (string) $value,
+            ];
+        }, array_keys($attributes), $attributes);
 
         return [
             'Dimensions' => $metrics,
