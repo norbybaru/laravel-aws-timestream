@@ -64,7 +64,10 @@ class TimestreamService
         if (($status = Arr::get($result->get('@metadata') ?? [], 'statusCode')) != 200) {
             Log::debug('Failed To insert Timestream', $payload);
 
-            throw new FailTimestreamWriterException($status);
+            throw new FailTimestreamWriterException(
+                new \Exception("Failed to insert Timestream: Status code {$status}"),
+                ['statusCode' => $status, 'payload' => $payload]
+            );
         }
 
         return $result;

@@ -223,6 +223,42 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertEquals(200, $result->get('@metadata')['statusCode']);
     }
 
+    public function test_it_should_throw_exception_for_failed_status()
+    {
+        // Prepare test payload
+        $payload = [
+            'DatabaseName' => 'test_database',
+            'TableName' => 'test_table',
+            'Records' => [
+                [
+                    'Time' => '1234567890',
+                    'MeasureName' => 'temperature',
+                    'MeasureValue' => '25.5',
+                    'MeasureValueType' => 'DOUBLE',
+                ],
+            ],
+        ];
+
+        // Prepare mock AWS Result with non-200 status code
+        $mockResult = Mockery::mock(Result::class);
+        $mockResult->shouldReceive('get')
+            ->with('@metadata')
+            ->andReturn(['statusCode' => 500]);
+
+        // Mock the writeRecords method to return our mock result
+        $this->mockWriteClient
+            ->shouldReceive('writeRecords')
+            ->once()
+            ->with($payload)
+            ->andReturn($mockResult);
+
+        // Expect FailTimestreamWriterException to be thrown
+        $this->expectException(FailTimestreamWriterException::class);
+
+        // Call the ingest method
+        $this->invokeProtectedMethod($this->service, 'ingest', [$payload]);
+    }
+
     public function test_it_should_handle_rejected_records_exception()
     {
         // Prepare test payload with multiple records
