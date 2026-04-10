@@ -48,14 +48,13 @@ class TimestreamService
         } catch (TimestreamWriteException $e) {
             $records = $payload['Records'];
             if ($e->getAwsErrorCode() === 'RejectedRecordsException') {
-                $records = collect($e->get('RejectedRecords'))
-                    ->map(function ($data) use ($records) {
-                        return [
-                            'RecordIndex' => $data['RecordIndex'],
-                            'Record' => $records[$data['RecordIndex']],
-                            'Reason' => $data['Reason'],
-                        ];
-                    })->all();
+                $records = array_map(function ($data) use ($records) {
+                    return [
+                        'RecordIndex' => $data['RecordIndex'],
+                        'Record' => $records[$data['RecordIndex']],
+                        'Reason' => $data['Reason'],
+                    ];
+                }, $e->get('RejectedRecords'));
             }
 
             throw new FailTimestreamWriterException($e, $records);
