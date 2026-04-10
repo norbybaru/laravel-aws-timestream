@@ -5,10 +5,12 @@ namespace NorbyBaru\AwsTimestream\Tests\Unit;
 use Aws\Result;
 use Aws\TimestreamQuery\Exception\TimestreamQueryException;
 use Aws\TimestreamQuery\TimestreamQueryClient;
+use Aws\TimestreamWrite\Exception\TimestreamWriteException;
 use Aws\TimestreamWrite\TimestreamWriteClient;
 use Mockery;
 use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
 use NorbyBaru\AwsTimestream\Exception\FailTimestreamQueryException;
+use NorbyBaru\AwsTimestream\Exception\FailTimestreamWriterException;
 use NorbyBaru\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
@@ -219,6 +221,87 @@ class TimestreamServiceUnitTest extends TestCase
         // Assert the result is returned correctly
         $this->assertInstanceOf(Result::class, $result);
         $this->assertEquals(200, $result->get('@metadata')['statusCode']);
+    }
+
+    public function test_it_should_handle_rejected_records_exception()
+    {
+        // Prepare test payload with multiple records
+        $payload = [
+            'DatabaseName' => 'test_database',
+            'TableName' => 'test_table',
+            'Records' => [
+                [
+                    'Time' => '1234567890',
+                    'MeasureName' => 'temperature',
+                    'MeasureValue' => '25.5',
+                    'MeasureValueType' => 'DOUBLE',
+                ],
+                [
+                    'Time' => '1234567891',
+                    'MeasureName' => 'humidity',
+                    'MeasureValue' => '60',
+                    'MeasureValueType' => 'BIGINT',
+                ],
+                [
+                    'Time' => '1234567892',
+                    'MeasureName' => 'pressure',
+                    'MeasureValue' => '1013.25',
+                    'MeasureValueType' => 'DOUBLE',
+                ],
+            ],
+        ];
+
+        // Prepare mock TimestreamWriteException with RejectedRecordsException
+        $mockCommand = Mockery::mock(\Aws\CommandInterface::class);
+        $mockException = Mockery::mock(TimestreamWriteException::class, ['RejectedRecordsException', $mockCommand]);
+        $mockException->shouldReceive('getAwsErrorCode')
+            ->andReturn('RejectedRecordsException');
+        $mockException->shouldReceive('get')
+            ->with('RejectedRecords')
+            ->andReturn([
+                [
+                    'RecordIndex' => 0,
+                    'Reason' => 'Invalid time value',
+                ],
+                [
+                    'RecordIndex' => 2,
+                    'Reason' => 'Duplicate record',
+                ],
+            ]);
+        $mockException->shouldReceive('getMessage')
+            ->andReturn('Records were rejected');
+        $mockException->shouldReceive('getCode')
+            ->andReturn(0);
+        $mockException->shouldReceive('getPrevious')
+            ->andReturn(null);
+
+        // Mock the writeRecords method to throw the exception
+        $this->mockWriteClient
+            ->shouldReceive('writeRecords')
+            ->once()
+            ->with($payload)
+            ->andThrow($mockException);
+
+        try {
+            // Call the ingest method - should throw FailTimestreamWriterException
+            $this->invokeProtectedMethod($this->service, 'ingest', [$payload]);
+            $this->fail('Expected FailTimestreamWriterException was not thrown');
+        } catch (FailTimestreamWriterException $e) {
+            // Assert the exception context contains mapped rejected records
+            $context = $e->context();
+            $this->assertIsArray($context);
+            $this->assertCount(2, $context);
+
+            // Assert first rejected record mapping
+            $this->assertEquals(0, $context[0]['RecordIndex']);
+            $this->assertEquals($payload['Records'][0], $context[0]['Record']);
+            $this->assertEquals('Invalid time value', $context[0]['Reason']);
+
+            // Assert second rejected record mapping
+            $this->assertEquals(2, $context[1]['RecordIndex']);
+            $this->assertEquals($payload['Records'][2], $context[1]['Record']);
+            $this->assertEquals('Duplicate record', $context[1]['Reason']);
+        }
     }
 
     public function test_it_should_handle_single_page_query()
