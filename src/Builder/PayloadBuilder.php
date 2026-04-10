@@ -43,13 +43,13 @@ final class PayloadBuilder implements PayloadBuilderContract
 
     public static function buildCommonAttributes(array $attributes): array
     {
-        $metrics = array_values(array_map(function ($key, $value) {
+        $metrics = array_map(function ($key, $value) {
             return [
                 'DimensionValueType' => 'VARCHAR',
                 'Name' => $key,
                 'Value' => (string) $value,
             ];
-        }, array_keys($attributes), $attributes));
+        }, array_keys($attributes), $attributes);
 
         return [
             'Dimensions' => $metrics,
