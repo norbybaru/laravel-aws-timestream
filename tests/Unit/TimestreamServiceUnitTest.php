@@ -182,6 +182,74 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertCount(2, $result);
     }
 
+    public function test_it_should_handle_single_page_query()
+    {
+        // Prepare mock AWS Result without NextToken (single page)
+        $mockResult = Mockery::mock(Result::class);
+        $mockResult->shouldReceive('get')
+            ->with('NextToken')
+            ->andReturn(null);
+
+        $mockResult->shouldReceive('get')
+            ->with('ColumnInfo')
+            ->andReturn([
+                ['Name' => 'user_id', 'Type' => ['ScalarType' => 'BIGINT']],
+                ['Name' => 'username', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ]);
+
+        $mockResult->shouldReceive('get')
+            ->with('Rows')
+            ->andReturn([
+                [
+                    'Data' => [
+                        ['ScalarValue' => '123'],
+                        ['ScalarValue' => 'john_doe'],
+                    ],
+                ],
+                [
+                    'Data' => [
+                        ['ScalarValue' => '456'],
+                        ['ScalarValue' => 'jane_doe'],
+                    ],
+                ],
+            ]);
+
+        $mockResult->shouldReceive('get')
+            ->with('QueryStatus')
+            ->andReturn(['Status' => 'SUCCESS']);
+
+        // Create a query builder
+        $queryBuilder = TimestreamBuilder::query()->from('test_database', 'test_table');
+
+        // Mock the query client to return our mock result
+        $this->mockQueryClient
+            ->shouldReceive('query')
+            ->once()
+            ->andReturn($mockResult);
+
+        // Execute the query
+        $readerDto = TimestreamReaderDto::make($queryBuilder);
+        $result = $this->service->query($readerDto);
+
+        // Assert the result is a Collection
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $result);
+
+        // Assert we got 2 rows
+        $this->assertCount(2, $result);
+
+        // Assert first row data
+        $firstRow = $result->first();
+        $this->assertIsArray($firstRow);
+        $this->assertEquals(123, $firstRow['user_id']);
+        $this->assertEquals('john_doe', $firstRow['username']);
+
+        // Assert second row data
+        $secondRow = $result->last();
+        $this->assertIsArray($secondRow);
+        $this->assertEquals(456, $secondRow['user_id']);
+        $this->assertEquals('jane_doe', $secondRow['username']);
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
