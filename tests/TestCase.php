@@ -12,6 +12,7 @@ abstract class TestCase extends OrchestraTestCase
     use ConfigurableTrait;
     use WithFaker;
 
+    public static $latestResponse;
     protected $loadEnvironmentVariables = true;
 
     protected function setUp(): void
