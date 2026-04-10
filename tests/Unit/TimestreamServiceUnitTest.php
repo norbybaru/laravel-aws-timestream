@@ -150,6 +150,38 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertEquals('2024-03-15 10:30:45', $result['created_at']->format('Y-m-d H:i:s'));
     }
 
+    public function test_it_should_deduplicate_row_keys()
+    {
+        // Prepare test data with duplicate column names (with :: suffix)
+        $row = [
+            'Data' => [
+                ['ScalarValue' => 'first-value'],
+                ['ScalarValue' => 'second-value'],
+                ['ScalarValue' => '100'],
+            ],
+        ];
+
+        $columnInfo = [
+            ['Name' => 'username::1', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ['Name' => 'username::2', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ['Name' => 'user_id', 'Type' => ['ScalarType' => 'BIGINT']],
+        ];
+
+        $result = $this->invokeProtectedMethod($this->service, 'parseRow', [$row, $columnInfo]);
+
+        // Assert the row keys are deduplicated (:: suffix removed)
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('username', $result);
+        $this->assertArrayHasKey('user_id', $result);
+
+        // The first value should be kept when deduplicating (parseRow skips subsequent duplicates)
+        $this->assertEquals('first-value', $result['username']);
+        $this->assertEquals(100, $result['user_id']);
+
+        // Verify we only have 2 keys (username and user_id), not 3
+        $this->assertCount(2, $result);
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
