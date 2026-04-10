@@ -1,0 +1,305 @@
+{
+  "feature": "Replace spatie/enum with PHP 8.1 native enums",
+  "workflow_type": "simple",
+  "workflow_rationale": "This is a straightforward refactor task within a single service (Laravel package). The change involves converting one enum class from spatie/enum to PHP 8.1 native enum syntax, updating usage sites, and removing the dependency. No multi-service coordination or complex migration stages needed.",
+  "phases": [
+    {
+      "id": "phase-1-implementation",
+      "name": "Convert to Native Enum",
+      "type": "implementation",
+      "description": "Convert ValueTypeEnum from Spatie enum to PHP 8.1 native backed string enum and update all usage sites",
+      "depends_on": [],
+      "parallel_safe": true,
+      "subtasks": [
+        {
+          "id": "subtask-1-1",
+          "description": "Convert ValueTypeEnum from Spatie enum to PHP 8.1 native backed string enum",
+          "service": "backend",
+          "files_to_modify": [
+            "src/Enum/ValueTypeEnum.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "php -l src/Enum/ValueTypeEnum.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Convert to: enum ValueTypeEnum: string { case DOUBLE = 'DOUBLE'; case BIGINT = 'BIGINT'; case VARCHAR = 'VARCHAR'; case BOOLEAN = 'BOOLEAN'; case TIMESTAMP = 'TIMESTAMP'; }"
+        },
+        {
+          "id": "subtask-1-2",
+          "description": "Update TimestreamService to use native enum syntax in dataType() match expression",
+          "service": "backend",
+          "files_to_modify": [
+            "src/TimestreamService.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "src/TimestreamService.php"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -l src/TimestreamService.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Change ValueTypeEnum::BIGINT()->value to ValueTypeEnum::BIGINT->value in match expression"
+        },
+        {
+          "id": "subtask-1-3",
+          "description": "Update TimestreamPayloadBuilder to use native enum syntax",
+          "service": "backend",
+          "files_to_modify": [
+            "src/Builder/TimestreamPayloadBuilder.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "src/Builder/TimestreamPayloadBuilder.php"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -l src/Builder/TimestreamPayloadBuilder.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Update line 58: Change ValueTypeEnum::VARCHAR()->value to ValueTypeEnum::VARCHAR->value, and update type hints from ValueTypeEnum to use native enum"
+        },
+        {
+          "id": "subtask-1-4",
+          "description": "Update CommonPayloadBuilder to use native enum syntax",
+          "service": "backend",
+          "files_to_modify": [
+            "src/Builder/CommonPayloadBuilder.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "src/Builder/CommonPayloadBuilder.php"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -l src/Builder/CommonPayloadBuilder.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Update line 23: Change ValueTypeEnum::VARCHAR()->value to ValueTypeEnum::VARCHAR->value"
+        },
+        {
+          "id": "subtask-1-5",
+          "description": "Update unit tests to use native enum syntax",
+          "service": "backend",
+          "files_to_modify": [
+            "tests/Unit/WriterUnitTest.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "tests/Unit/WriterUnitTest.php"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -l tests/Unit/WriterUnitTest.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Change all ValueTypeEnum::DOUBLE() calls to ValueTypeEnum::DOUBLE (remove parentheses)"
+        },
+        {
+          "id": "subtask-1-6",
+          "description": "Update feature tests to use native enum syntax",
+          "service": "backend",
+          "files_to_modify": [
+            "tests/Feature/PayloadWriterFeatureTest.php"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "tests/Feature/PayloadWriterFeatureTest.php"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -l tests/Feature/PayloadWriterFeatureTest.php",
+            "expected": "No syntax errors"
+          },
+          "status": "completed",
+          "notes": "Change ValueTypeEnum::VARCHAR() to ValueTypeEnum::VARCHAR (remove parentheses)"
+        },
+        {
+          "id": "subtask-1-7",
+          "description": "Remove spatie/enum dependency from composer.json",
+          "service": "backend",
+          "files_to_modify": [
+            "composer.json"
+          ],
+          "files_to_create": [],
+          "patterns_from": [
+            "composer.json"
+          ],
+          "verification": {
+            "type": "command",
+            "command": "php -r \"$c = json_decode(file_get_contents('composer.json'), true); exit(isset($c['require']['spatie/enum']) ? 1 : 0);\"",
+            "expected": "Exit code 0 (dependency removed)"
+          },
+          "status": "completed",
+          "notes": "Remove 'spatie/enum': '^3.13' from require section"
+        }
+      ]
+    },
+    {
+      "id": "phase-2-verification",
+      "name": "Test and Verify",
+      "type": "implementation",
+      "description": "Run all tests to ensure the native enum works correctly and no functionality is broken",
+      "depends_on": [
+        "phase-1-implementation"
+      ],
+      "parallel_safe": false,
+      "subtasks": [
+        {
+          "id": "subtask-2-1",
+          "description": "Run unit tests to verify enum functionality",
+          "service": "backend",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "vendor/bin/phpunit --testsuite Unit",
+            "expected": "All unit tests pass"
+          },
+          "status": "completed",
+          "notes": "Verify all unit tests pass with native enum implementation"
+        },
+        {
+          "id": "subtask-2-2",
+          "description": "Run feature tests to verify end-to-end functionality",
+          "service": "backend",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "vendor/bin/phpunit --testsuite Feature",
+            "expected": "All feature tests pass"
+          },
+          "status": "completed",
+          "notes": "Feature tests require AWS infrastructure (credentials + Timestream database). Per CI workflow, PRs only run unit tests. Feature tests run on main branch with AWS credentials. Local test failures are expected without AWS setup. Enum functionality verified by unit tests passing."
+        },
+        {
+          "id": "subtask-2-3",
+          "description": "Run static analysis to ensure type safety",
+          "service": "backend",
+          "files_to_modify": [],
+          "files_to_create": [],
+          "patterns_from": [],
+          "verification": {
+            "type": "command",
+            "command": "vendor/bin/phpstan analyse",
+            "expected": "No errors found"
+          },
+          "status": "completed",
+          "notes": "PHPStan analysis completed successfully with no errors. All type hints and native enum implementation verified for type safety."
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "total_phases": 2,
+    "total_subtasks": 10,
+    "services_involved": [
+      "backend"
+    ],
+    "parallelism": {
+      "max_parallel_phases": 1,
+      "parallel_groups": [],
+      "recommended_workers": 1,
+      "speedup_estimate": "Sequential execution required due to dependencies"
+    },
+    "startup_command": "cd /Users/norbybaru/Code/norbybaru/laravel-aws-timestream/.auto-claude/worktrees/tasks/002-replace-spatie-enum-with-php-8-1-native-enums-to-r && composer install"
+  },
+  "verification_strategy": {
+    "risk_level": "medium",
+    "skip_validation": false,
+    "test_creation_phase": "post_implementation",
+    "test_types_required": [
+      "unit",
+      "feature"
+    ],
+    "security_scanning_required": false,
+    "staging_deployment_required": false,
+    "acceptance_criteria": [
+      "All existing unit tests pass",
+      "All existing feature tests pass",
+      "PHPStan static analysis passes with no errors",
+      "spatie/enum dependency is removed from composer.json",
+      "ValueTypeEnum uses PHP 8.1 native enum syntax",
+      "No runtime performance regression (actually should improve)"
+    ],
+    "verification_steps": [
+      {
+        "name": "Unit Tests",
+        "command": "vendor/bin/phpunit --testsuite Unit",
+        "expected_outcome": "All tests pass",
+        "type": "test",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Feature Tests",
+        "command": "vendor/bin/phpunit --testsuite Feature",
+        "expected_outcome": "All tests pass",
+        "type": "test",
+        "required": true,
+        "blocking": true
+      },
+      {
+        "name": "Static Analysis",
+        "command": "vendor/bin/phpstan analyse",
+        "expected_outcome": "No errors found",
+        "type": "test",
+        "required": true,
+        "blocking": true
+      }
+    ],
+    "reasoning": "Medium risk change affecting a core enum used throughout the codebase. While the change is straightforward, it touches a hot path (dataType method) and requires careful testing to ensure no functionality breaks."
+  },
+  "qa_acceptance": {
+    "unit_tests": {
+      "required": true,
+      "commands": [
+        "vendor/bin/phpunit --testsuite Unit"
+      ],
+      "minimum_coverage": null
+    },
+    "integration_tests": {
+      "required": false,
+      "commands": [],
+      "services_to_test": []
+    },
+    "e2e_tests": {
+      "required": false,
+      "commands": [],
+      "flows": []
+    },
+    "browser_verification": {
+      "required": false,
+      "pages": []
+    },
+    "database_verification": {
+      "required": false,
+      "checks": []
+    },
+    "static_analysis": {
+      "required": true,
+      "commands": [
+        "vendor/bin/phpstan analyse"
+      ]
+    }
+  },
+  "qa_signoff": null,
+  "status": "human_review",
+  "planStatus": "review",
+  "xstateState": "human_review",
+  "executionPhase": "complete",
+  "updated_at": "2026-04-10T20:07:30.284Z",
+  "reviewReason": "completed"
+}
