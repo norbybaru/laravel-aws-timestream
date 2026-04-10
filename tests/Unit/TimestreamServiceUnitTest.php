@@ -65,6 +65,16 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertEquals(123.456, $doubleResult);
     }
 
+    public function test_it_should_parse_timestamp_correctly()
+    {
+        // Test TIMESTAMP conversion with format 'Y-m-d H:i:s.u000'
+        $timestampInput = '2024-03-15 10:30:45.123456000';
+        $timestampResult = $this->invokeProtectedMethod($this->service, 'dataType', ['TIMESTAMP', $timestampInput]);
+
+        $this->assertInstanceOf(\Carbon\Carbon::class, $timestampResult);
+        $this->assertEquals('2024-03-15 10:30:45', $timestampResult->format('Y-m-d H:i:s'));
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
