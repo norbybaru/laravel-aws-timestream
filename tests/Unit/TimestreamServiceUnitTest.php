@@ -250,6 +250,119 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertEquals('jane_doe', $secondRow['username']);
     }
 
+    public function test_it_should_handle_paginated_query()
+    {
+        // Prepare mock AWS Result for first page (with NextToken)
+        $mockResultPage1 = Mockery::mock(Result::class);
+        $mockResultPage1->shouldReceive('get')
+            ->with('NextToken')
+            ->andReturn('next-token-123');
+
+        $mockResultPage1->shouldReceive('get')
+            ->with('ColumnInfo')
+            ->andReturn([
+                ['Name' => 'user_id', 'Type' => ['ScalarType' => 'BIGINT']],
+                ['Name' => 'username', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ]);
+
+        $mockResultPage1->shouldReceive('get')
+            ->with('Rows')
+            ->andReturn([
+                [
+                    'Data' => [
+                        ['ScalarValue' => '100'],
+                        ['ScalarValue' => 'alice'],
+                    ],
+                ],
+                [
+                    'Data' => [
+                        ['ScalarValue' => '200'],
+                        ['ScalarValue' => 'bob'],
+                    ],
+                ],
+            ]);
+
+        $mockResultPage1->shouldReceive('get')
+            ->with('QueryStatus')
+            ->andReturn(['Status' => 'SUCCESS']);
+
+        // Prepare mock AWS Result for second page (without NextToken)
+        $mockResultPage2 = Mockery::mock(Result::class);
+        $mockResultPage2->shouldReceive('get')
+            ->with('NextToken')
+            ->andReturn(null);
+
+        $mockResultPage2->shouldReceive('get')
+            ->with('ColumnInfo')
+            ->andReturn([
+                ['Name' => 'user_id', 'Type' => ['ScalarType' => 'BIGINT']],
+                ['Name' => 'username', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ]);
+
+        $mockResultPage2->shouldReceive('get')
+            ->with('Rows')
+            ->andReturn([
+                [
+                    'Data' => [
+                        ['ScalarValue' => '300'],
+                        ['ScalarValue' => 'charlie'],
+                    ],
+                ],
+            ]);
+
+        $mockResultPage2->shouldReceive('get')
+            ->with('QueryStatus')
+            ->andReturn(['Status' => 'SUCCESS']);
+
+        // Create a query builder
+        $queryBuilder = TimestreamBuilder::query()->from('test_database', 'test_table');
+
+        // Mock the query client to return different results based on NextToken
+        $this->mockQueryClient
+            ->shouldReceive('query')
+            ->once()
+            ->with(Mockery::on(function ($arg) {
+                return !isset($arg['NextToken']);
+            }))
+            ->andReturn($mockResultPage1);
+
+        $this->mockQueryClient
+            ->shouldReceive('query')
+            ->once()
+            ->with(Mockery::on(function ($arg) {
+                return isset($arg['NextToken']) && $arg['NextToken'] === 'next-token-123';
+            }))
+            ->andReturn($mockResultPage2);
+
+        // Execute the query
+        $readerDto = TimestreamReaderDto::make($queryBuilder);
+        $result = $this->service->query($readerDto);
+
+        // Assert the result is a Collection
+        $this->assertInstanceOf(\Illuminate\Support\Collection::class, $result);
+
+        // Assert we got all 3 rows from both pages
+        $this->assertCount(3, $result);
+
+        // Assert rows are returned in reverse page order (page 2 first, then page 1)
+        // due to recursive merge in runQuery method
+
+        // Assert first row data (from page 2 - last page comes first)
+        $this->assertIsArray($result[0]);
+        $this->assertEquals(300, $result[0]['user_id']);
+        $this->assertEquals('charlie', $result[0]['username']);
+
+        // Assert second row data (from page 1)
+        $this->assertIsArray($result[1]);
+        $this->assertEquals(100, $result[1]['user_id']);
+        $this->assertEquals('alice', $result[1]['username']);
+
+        // Assert third row data (from page 1)
+        $this->assertIsArray($result[2]);
+        $this->assertEquals(200, $result[2]['user_id']);
+        $this->assertEquals('bob', $result[2]['username']);
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
