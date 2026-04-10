@@ -3,10 +3,12 @@
 namespace NorbyBaru\AwsTimestream\Tests\Unit;
 
 use Aws\Result;
+use Aws\TimestreamQuery\Exception\TimestreamQueryException;
 use Aws\TimestreamQuery\TimestreamQueryClient;
 use Aws\TimestreamWrite\TimestreamWriteClient;
 use Mockery;
 use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\Exception\FailTimestreamQueryException;
 use NorbyBaru\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
@@ -361,6 +363,25 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertIsArray($result[2]);
         $this->assertEquals(200, $result[2]['user_id']);
         $this->assertEquals('bob', $result[2]['username']);
+    }
+
+    public function test_it_should_throw_exception_on_query_error()
+    {
+        // Create a query builder
+        $queryBuilder = TimestreamBuilder::query()->from('test_database', 'test_table');
+
+        // Mock the query client to throw TimestreamQueryException
+        $this->mockQueryClient
+            ->shouldReceive('query')
+            ->once()
+            ->andThrow(new TimestreamQueryException('Query failed', Mockery::mock(\Aws\CommandInterface::class)));
+
+        // Expect FailTimestreamQueryException to be thrown
+        $this->expectException(FailTimestreamQueryException::class);
+
+        // Execute the query
+        $readerDto = TimestreamReaderDto::make($queryBuilder);
+        $this->service->query($readerDto);
     }
 
     /**
