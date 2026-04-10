@@ -7,6 +7,7 @@ use Aws\TimestreamQuery\TimestreamQueryClient;
 use Aws\TimestreamWrite\TimestreamWriteClient;
 use Mockery;
 use NorbyBaru\AwsTimestream\Dto\TimestreamReaderDto;
+use NorbyBaru\AwsTimestream\Exception\UnknownTimestreamDataTypeException;
 use NorbyBaru\AwsTimestream\Tests\TestCase;
 use NorbyBaru\AwsTimestream\TimestreamBuilder;
 use NorbyBaru\AwsTimestream\TimestreamManager;
@@ -92,6 +93,14 @@ class TimestreamServiceUnitTest extends TestCase
 
         $timestampResult = $this->invokeProtectedMethod($this->service, 'dataType', ['TIMESTAMP', null]);
         $this->assertNull($timestampResult);
+    }
+
+    public function test_it_should_throw_exception_for_unknown_type()
+    {
+        $this->expectException(UnknownTimestreamDataTypeException::class);
+        $this->expectExceptionMessage('Unknown Data Type From TimeStream: INVALID_TYPE');
+
+        $this->invokeProtectedMethod($this->service, 'dataType', ['INVALID_TYPE', 'some-value']);
     }
 
     /**
