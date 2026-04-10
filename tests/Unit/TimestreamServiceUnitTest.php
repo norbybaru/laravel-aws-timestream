@@ -184,6 +184,43 @@ class TimestreamServiceUnitTest extends TestCase
         $this->assertCount(2, $result);
     }
 
+    public function test_it_should_handle_successful_write()
+    {
+        // Prepare test payload
+        $payload = [
+            'DatabaseName' => 'test_database',
+            'TableName' => 'test_table',
+            'Records' => [
+                [
+                    'Time' => '1234567890',
+                    'MeasureName' => 'temperature',
+                    'MeasureValue' => '25.5',
+                    'MeasureValueType' => 'DOUBLE',
+                ],
+            ],
+        ];
+
+        // Prepare mock AWS Result with status 200
+        $mockResult = Mockery::mock(Result::class);
+        $mockResult->shouldReceive('get')
+            ->with('@metadata')
+            ->andReturn(['statusCode' => 200]);
+
+        // Mock the writeRecords method to return our mock result
+        $this->mockWriteClient
+            ->shouldReceive('writeRecords')
+            ->once()
+            ->with($payload)
+            ->andReturn($mockResult);
+
+        // Call the ingest method
+        $result = $this->invokeProtectedMethod($this->service, 'ingest', [$payload]);
+
+        // Assert the result is returned correctly
+        $this->assertInstanceOf(Result::class, $result);
+        $this->assertEquals(200, $result->get('@metadata')['statusCode']);
+    }
+
     public function test_it_should_handle_single_page_query()
     {
         // Prepare mock AWS Result without NextToken (single page)
