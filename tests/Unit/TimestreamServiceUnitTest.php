@@ -103,6 +103,53 @@ class TimestreamServiceUnitTest extends TestCase
         $this->invokeProtectedMethod($this->service, 'dataType', ['INVALID_TYPE', 'some-value']);
     }
 
+    public function test_it_should_parse_row_correctly()
+    {
+        // Prepare test data with multiple data types
+        $row = [
+            'Data' => [
+                ['ScalarValue' => '12345'],
+                ['ScalarValue' => 'test-value'],
+                ['ScalarValue' => '1'],
+                ['ScalarValue' => '123.456'],
+                ['ScalarValue' => '2024-03-15 10:30:45.123456000'],
+            ],
+        ];
+
+        $columnInfo = [
+            ['Name' => 'user_id', 'Type' => ['ScalarType' => 'BIGINT']],
+            ['Name' => 'username', 'Type' => ['ScalarType' => 'VARCHAR']],
+            ['Name' => 'is_active', 'Type' => ['ScalarType' => 'BOOLEAN']],
+            ['Name' => 'score', 'Type' => ['ScalarType' => 'DOUBLE']],
+            ['Name' => 'created_at', 'Type' => ['ScalarType' => 'TIMESTAMP']],
+        ];
+
+        $result = $this->invokeProtectedMethod($this->service, 'parseRow', [$row, $columnInfo]);
+
+        // Assert the row is parsed correctly with proper data types
+        $this->assertIsArray($result);
+        $this->assertArrayHasKey('user_id', $result);
+        $this->assertArrayHasKey('username', $result);
+        $this->assertArrayHasKey('is_active', $result);
+        $this->assertArrayHasKey('score', $result);
+        $this->assertArrayHasKey('created_at', $result);
+
+        $this->assertIsInt($result['user_id']);
+        $this->assertEquals(12345, $result['user_id']);
+
+        $this->assertIsString($result['username']);
+        $this->assertEquals('test-value', $result['username']);
+
+        $this->assertIsBool($result['is_active']);
+        $this->assertTrue($result['is_active']);
+
+        $this->assertIsFloat($result['score']);
+        $this->assertEquals(123.456, $result['score']);
+
+        $this->assertInstanceOf(\Carbon\Carbon::class, $result['created_at']);
+        $this->assertEquals('2024-03-15 10:30:45', $result['created_at']->format('Y-m-d H:i:s'));
+    }
+
     /**
      * Helper method to invoke protected/private methods for testing
      */
