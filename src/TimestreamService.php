@@ -48,14 +48,13 @@ class TimestreamService
         } catch (TimestreamWriteException $e) {
             $records = $payload['Records'];
             if ($e->getAwsErrorCode() === 'RejectedRecordsException') {
-                $records = collect($e->get('RejectedRecords'))
-                    ->map(function ($data) use ($records) {
-                        return [
-                            'RecordIndex' => $data['RecordIndex'],
-                            'Record' => $records[$data['RecordIndex']],
-                            'Reason' => $data['Reason'],
-                        ];
-                    })->all();
+                $records = array_map(function ($data) use ($records) {
+                    return [
+                        'RecordIndex' => $data['RecordIndex'],
+                        'Record' => $records[$data['RecordIndex']],
+                        'Reason' => $data['Reason'],
+                    ];
+                }, $e->get('RejectedRecords'));
             }
 
             throw new FailTimestreamWriterException($e, $records);
@@ -64,7 +63,10 @@ class TimestreamService
         if (($status = Arr::get($result->get('@metadata') ?? [], 'statusCode')) != 200) {
             Log::debug('Failed To insert Timestream', $payload);
 
-            throw new FailTimestreamWriterException($status);
+            throw new FailTimestreamWriterException(
+                new \Exception("Failed to insert Timestream: Status code {$status}"),
+                ['statusCode' => $status, 'payload' => $payload]
+            );
         }
 
         return $result;
@@ -143,11 +145,11 @@ class TimestreamService
         }
 
         $return = match ($type) {
-            ValueTypeEnum::BIGINT()->value => (int) $value,
-            ValueTypeEnum::BOOLEAN()->value => (bool) $value,
-            ValueTypeEnum::VARCHAR()->value => (string) $value,
-            ValueTypeEnum::DOUBLE()->value => (float) $value,
-            ValueTypeEnum::TIMESTAMP()->value => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
+            ValueTypeEnum::BIGINT->value => (int) $value,
+            ValueTypeEnum::BOOLEAN->value => (bool) $value,
+            ValueTypeEnum::VARCHAR->value => (string) $value,
+            ValueTypeEnum::DOUBLE->value => (float) $value,
+            ValueTypeEnum::TIMESTAMP->value => Carbon::createFromFormat('Y-m-d H:i:s.u000', $value),
             default => throw new UnknownTimestreamDataTypeException('Unknown Data Type From TimeStream: ' . $type),
         };
 
