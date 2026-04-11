@@ -79,25 +79,32 @@ class TimestreamService
 
     private function runQuery(array $params): Collection
     {
+        $pages = [];
+
         try {
-            if ($this->shouldDebugQuery()) {
-                Log::debug('=== Timestream Query ===', $params);
-            }
+            do {
+                if ($this->shouldDebugQuery()) {
+                    Log::debug('=== Timestream Query ===', $params);
+                }
 
-            $result = $this->reader->query($params);
+                $result = $this->reader->query($params);
+                $pages[] = $this->parseQueryResult($result);
 
-            // fetch everything recursively until the limit has been reached or there is no more data
-            if ($nextToken = $result->get('NextToken')) {
-                $parsedRows = $this->parseQueryResult($result);
-                $params['NextToken'] = $nextToken;
-
-                return $this->runQuery($params)->merge($parsedRows);
-            }
+                $nextToken = $result->get('NextToken');
+                if ($nextToken) {
+                    $params['NextToken'] = $nextToken;
+                }
+            } while ($nextToken);
         } catch (TimestreamQueryException $e) {
             throw new FailTimestreamQueryException($e, $params);
         }
 
-        return $this->parseQueryResult($result);
+        // Merge pages in reverse order to maintain the same behavior as recursive approach
+        return array_reduce(
+            array_reverse($pages),
+            fn ($carry, $page) => $carry ? $carry->merge($page) : $page,
+            null
+        );
     }
 
     private function parseQueryResult(Result $result): Collection
