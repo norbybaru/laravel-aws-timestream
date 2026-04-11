@@ -29,7 +29,7 @@ class WriterUnitTest extends TestCase
 
         $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $this->faker->randomDigit)
-            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
             ->setTime(Carbon::now())
             ->setDimensions(name: 'mac_address', value: $this->faker->macAddress)
             ->setDimensions(name: 'ref', value: $this->faker->uuid);
@@ -59,7 +59,7 @@ class WriterUnitTest extends TestCase
 
         $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $this->faker->randomDigit)
-            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
             ->setTime(Carbon::now())
             ->setDimensions(name: 'mac_address', value: $this->faker->macAddress)
             ->setDimensions(name: 'ref', value: $this->faker->uuid)
@@ -96,7 +96,7 @@ class WriterUnitTest extends TestCase
         $now = Carbon::now();
         $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $measureValue)
-            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
             ->setTime($now)
             ->setDimensions(name: 'mac_address', value: $this->faker->macAddress)
             ->setDimensions(name: 'ref', value: $this->faker->uuid)
@@ -104,7 +104,7 @@ class WriterUnitTest extends TestCase
 
         $this->assertEquals('device', $payload[0]['MeasureName']);
         $this->assertEquals($measureValue, $payload[0]['MeasureValue']);
-        $this->assertEquals(ValueTypeEnum::DOUBLE()->value, $payload[0]['MeasureValueType']);
+        $this->assertEquals(ValueTypeEnum::DOUBLE->value, $payload[0]['MeasureValueType']);
         $this->assertCount(2, $payload[0]['Dimensions']);
         $this->assertEquals($now->getPreciseTimestamp(3), $payload[0]['Time']);
     }
@@ -131,7 +131,7 @@ class WriterUnitTest extends TestCase
 
         $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $this->faker->randomDigit)
-            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
             ->setTime(Carbon::now())
             ->setDimensions(name: 'mac_address', value: $this->faker->macAddress)
             ->setDimensions(name: 'ref', value: $this->faker->uuid)
@@ -185,13 +185,13 @@ class WriterUnitTest extends TestCase
         $payloads = [
             ...TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
-                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
                 ->setTime(Carbon::now())
                 ->toRecords(),
             ...TimestreamPayloadBuilder::make(measureName: 'memory_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
-                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
                 ->setTime(Carbon::now())
                 ->toRecords(),
@@ -243,13 +243,13 @@ class WriterUnitTest extends TestCase
         $payload = [
             ...TimestreamPayloadBuilder::make(measureName: 'cpu_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
-                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
                 ->setTime(Carbon::now())
                 ->toRecords(),
             ...TimestreamPayloadBuilder::make(measureName: 'memory_usage')
                 ->setMeasureValue(value: $this->faker->randomFloat(5, 1, 100))
-                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+                ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
                 ->setDimensions(name: "ref", value: $this->faker->uuid)
                 ->setTime(Carbon::now())
                 ->toRecords(),
@@ -317,7 +317,7 @@ class WriterUnitTest extends TestCase
         $common = CommonPayloadBuilder::make()
             ->setCommonDimensions(name: 'processor', value: $this->faker->linuxProcessor)
             ->setCommonDimensions(name: 'mac_address', value: $this->faker->macAddress)
-            ->setCommonMeasureValueType(ValueTypeEnum::DOUBLE())
+            ->setCommonMeasureValueType(ValueTypeEnum::DOUBLE)
             ->setCommonTime(Carbon::now())
             ->toArray();
 
@@ -343,7 +343,7 @@ class WriterUnitTest extends TestCase
     {
         $payload = TimestreamPayloadBuilder::make(measureName: 'device')
             ->setMeasureValue(value: $this->faker->randomDigit)
-            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE())
+            ->setMeasureValueType(type: ValueTypeEnum::DOUBLE)
             ->setTime(Carbon::now())
             ->setDimensions(name: 'mac_address', value: $this->faker->macAddress)
             ->setDimensions(name: 'ref', value: $this->faker->uuid)

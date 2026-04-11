@@ -12,17 +12,17 @@ class TimestreamBuilder
 {
     public static function batchPayload(array $metrics): array
     {
-        return collect($metrics)
-            ->map(
-                fn ($metric) =>
-                self::payload(
-                    $metric['measure_name'],
-                    $metric['measure_value'],
-                    $metric['time'],
-                    $metric['measure_value_type'] ?? 'VARCHAR',
-                    $metric['dimensions'] ?? []
-                )->toArray(true)
-            )->all();
+        return array_map(
+            fn ($metric) =>
+            self::payload(
+                $metric['measure_name'],
+                $metric['measure_value'],
+                $metric['time'],
+                $metric['measure_value_type'] ?? 'VARCHAR',
+                $metric['dimensions'] ?? []
+            )->toArray(true),
+            $metrics
+        );
     }
 
     public static function payload(
