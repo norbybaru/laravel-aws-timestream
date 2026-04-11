@@ -71,41 +71,36 @@ trait BuildersConcern
     {
         if ($this->getWithQueries()) {
             $withQueries = 'WITH ' . implode(',', $this->getWithQueries());
-            $queryString = Str::of($withQueries)
-                ->append(' ')
-                ->append($this->getSelectStatement());
+            $queryString = $withQueries;
+            $queryString .= ' ';
+            $queryString .= $this->getSelectStatement();
         } else {
-            $queryString = Str::of($this->getSelectStatement());
+            $queryString = $this->getSelectStatement();
         }
 
         if ($this->getFromQuery()) {
-            $queryString = $queryString
-                ->append(' ')
-                ->append($this->getFromQuery());
+            $queryString .= ' ';
+            $queryString .= $this->getFromQuery();
         }
 
         if ($this->getWhereQuery()) {
-            $queryString = $queryString
-                ->append(' ')
-                ->append($this->getWhereQuery());
+            $queryString .= ' ';
+            $queryString .= $this->getWhereQuery();
         }
 
         if ($this->getGroupByQuery()) {
-            $queryString = $queryString
-                ->append(' ')
-                ->append($this->getGroupByQuery());
+            $queryString .= ' ';
+            $queryString .= $this->getGroupByQuery();
         }
 
         if ($this->getOrderByQuery()) {
-            $queryString = $queryString
-                ->append(' ')
-                ->append($this->getOrderByQuery());
+            $queryString .= ' ';
+            $queryString .= $this->getOrderByQuery();
         }
 
         if ($this->getLimitByQuery()) {
-            $queryString = $queryString
-                ->append(' ')
-                ->append($this->getLimitByQuery());
+            $queryString .= ' ';
+            $queryString .= $this->getLimitByQuery();
         }
 
         return $queryString;
@@ -132,7 +127,7 @@ trait BuildersConcern
                 $query = sprintf(' AND %s', trim($this->strTrimFrom($queryBuilder->getWhereQuery(), 'WHERE')));
             }
 
-            $this->whereQuery = Str::of($this->whereQuery)->append($query);
+            $this->whereQuery .= $query;
         }
 
         if ($fromQuery = $queryBuilder->getFromQuery()) {
