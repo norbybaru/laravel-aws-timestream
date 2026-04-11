@@ -46,7 +46,7 @@ abstract class Builder implements QueryBuilderContract
         $this->fromQuery = 'FROM "' . $database . '"."' . $table . '"';
 
         if ($alias) {
-            $this->fromQuery = Str::of($this->fromQuery)->append(" {$alias}");
+            $this->fromQuery .= " {$alias}";
         }
 
         return $this;
@@ -76,22 +76,18 @@ abstract class Builder implements QueryBuilderContract
 
     public function where(string $column, $value, string $operator = '=', string $boolean = 'and', bool $ago = false): self
     {
-        $query = Str::of($this->whereQuery);
+        $query = $this->whereQuery;
 
         $value = $value instanceof Closure
             // If the value is a Closure, it means the developer is performing an entire
             ? '(' . call_user_func($value) . ')'
             : $value;
 
-        if ($query->length() == 0) {
-            $whereQuery = $query->append(
-                sprintf('WHERE %s %s %s', $column, $operator, $value)
-            );
-
+        if (strlen($query) == 0) {
             if ($ago) {
-                $whereQuery = $query->append(
-                    sprintf('WHERE %s %s ago(%s)', $column, $operator, $value)
-                );
+                $whereQuery = sprintf('WHERE %s %s ago(%s)', $column, $operator, $value);
+            } else {
+                $whereQuery = sprintf('WHERE %s %s %s', $column, $operator, $value);
             }
 
             $this->whereQuery = $whereQuery;
@@ -99,14 +95,10 @@ abstract class Builder implements QueryBuilderContract
             return $this;
         }
 
-        $whereQuery = $query->append(
-            sprintf(' %s %s %s %s', mb_strtoupper($boolean), $column, $operator, $value)
-        );
-
         if ($ago) {
-            $whereQuery = $query->append(
-                sprintf(' %s %s %s ago(%s)', mb_strtoupper($boolean), $column, $operator, $value)
-            );
+            $whereQuery = $query . sprintf(' %s %s %s ago(%s)', mb_strtoupper($boolean), $column, $operator, $value);
+        } else {
+            $whereQuery = $query . sprintf(' %s %s %s %s', mb_strtoupper($boolean), $column, $operator, $value);
         }
 
         $this->whereQuery = $whereQuery;
@@ -130,43 +122,33 @@ abstract class Builder implements QueryBuilderContract
             return $this;
         }
 
-        $query = Str::of($this->whereQuery);
+        $query = $this->whereQuery;
 
-        if ($query->length() == 0) {
-            $query = $query->append('WHERE ');
+        if (strlen($query) == 0) {
+            $query .= 'WHERE ';
         } else {
-            $query = $query->append(
-                sprintf(' %s ', mb_strtoupper($boolean))
-            );
+            $query .= sprintf(' %s ', mb_strtoupper($boolean));
         }
 
         $operator = $not ? 'NOT IN' : 'IN';
-        $query = $query
-            ->append(
-                sprintf('%s %s (', $column, $operator)
-            );
+        $query .= sprintf('%s %s (', $column, $operator);
 
         if ($values instanceof Closure) {
-            $query = Str::of($query)
-                ->append(
-                    sprintf('%s', trim(call_user_func($values)))
-                );
+            $query .= sprintf('%s', trim(call_user_func($values)));
         } else {
             $counter = count($values);
 
             collect($values)->each(function ($value) use (&$counter, &$query) {
-                $query = Str::of($query)
-                    ->append(
-                        sprintf('%s', trim("'$value'"))
-                    );
+                $query .= sprintf('%s', trim("'$value'"));
                 $counter--;
                 if ($counter !== 0) {
-                    $query = Str::of($query)->append(',');
+                    $query .= ',';
                 }
             });
         }
 
-        $this->whereQuery = Str::of($query)->append(')');
+        $query .= ')';
+        $this->whereQuery = $query;
 
         return $this;
     }
@@ -182,28 +164,23 @@ abstract class Builder implements QueryBuilderContract
             return $this;
         }
 
-        $query = Str::of($this->whereQuery);
+        $query = $this->whereQuery;
 
-        if ($query->length() == 0) {
-            $query = $query->append('WHERE ');
+        if (strlen($query) == 0) {
+            $query .= 'WHERE ';
         } else {
-            $query = $query->append(
-                sprintf(' %s ', mb_strtoupper($boolean))
-            );
+            $query .= sprintf(' %s ', mb_strtoupper($boolean));
         }
 
         $type = 'BETWEEN';
         $operator = $not ? 'NOT ' : '';
         $operator .= $type;
-        $query = $query
-            ->append(
-                sprintf('%s %s ', $column, $operator)
-            );
+        $query .= sprintf('%s %s ', $column, $operator);
 
         [$firstKey, $secondKey] = array_slice(Arr::flatten($values), 0, 2);
 
-        $this->whereQuery = Str::of($query)
-            ->append(sprintf("%s and %s", $firstKey, $secondKey));
+        $query .= sprintf("%s and %s", $firstKey, $secondKey);
+        $this->whereQuery = $query;
 
         return $this;
     }
@@ -224,26 +201,24 @@ abstract class Builder implements QueryBuilderContract
             return $this;
         }
 
-        $query = Str::of($this->whereQuery);
+        $query = $this->whereQuery;
 
-        if ($query->length() == 0) {
-            $query = $query->append('WHERE ');
+        if (strlen($query) == 0) {
+            $query .= 'WHERE ';
         } else {
-            $query = $query->append(
-                sprintf(' %s ', mb_strtoupper($boolean))
-            );
+            $query .= sprintf(' %s ', mb_strtoupper($boolean));
         }
 
         $counter = 0;
         foreach (Arr::wrap($columns) as $column) {
             $counter++;
-            $query = $query->append(sprintf('%s %s', $column, $operator));
+            $query .= sprintf('%s %s', $column, $operator);
             if ($counter < count(Arr::wrap($columns))) {
-                $query = $query->append(sprintf(' %s ', mb_strtoupper($boolean)));
+                $query .= sprintf(' %s ', mb_strtoupper($boolean));
             }
         }
 
-        $this->whereQuery = Str::of($query);
+        $this->whereQuery = $query;
 
         return $this;
     }
