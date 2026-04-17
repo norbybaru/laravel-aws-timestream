@@ -8,9 +8,11 @@ use Aws\TimestreamWrite\TimestreamWriteClient;
 
 class TimestreamManager
 {
-    private TimestreamQueryClient $reader;
+    private ?TimestreamQueryClient $reader = null;
 
-    private TimestreamWriteClient $writer;
+    private ?TimestreamWriteClient $writer = null;
+
+    private array $config;
 
     public function __construct(
         ?string $key,
@@ -19,31 +21,46 @@ class TimestreamManager
         string $region,
         string $version = 'latest',
     ) {
-        $config = [
+        $this->config = [
             'version' => $version,
             'region' => $region,
         ];
 
         // key and secret can be omitted when lambda or container policy allow access to AWS Timestream Service
         if ($key && $secret) {
-            $config['credentials'] = new Credentials($key, $secret);
+            $this->config['credentials'] = new Credentials($key, $secret);
         }
 
         if ($profile) {
-            $config['profile'] = $profile;
+            $this->config['profile'] = $profile;
         }
-
-        $this->reader = new TimestreamQueryClient($config);
-        $this->writer = new TimestreamWriteClient($config);
     }
 
     public function getReader(): TimestreamQueryClient
     {
+        if ($this->reader === null) {
+            $this->reader = $this->createReader();
+        }
+
         return $this->reader;
     }
 
     public function getWriter(): TimestreamWriteClient
     {
+        if ($this->writer === null) {
+            $this->writer = $this->createWriter();
+        }
+
         return $this->writer;
+    }
+
+    private function createReader(): TimestreamQueryClient
+    {
+        return new TimestreamQueryClient($this->config);
+    }
+
+    private function createWriter(): TimestreamWriteClient
+    {
+        return new TimestreamWriteClient($this->config);
     }
 }
