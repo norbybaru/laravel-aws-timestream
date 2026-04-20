@@ -13,6 +13,16 @@ use NorbyBaru\AwsTimestream\TimestreamService;
 
 class PayloadWriterFeatureTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Skip feature tests if AWS credentials are not configured or connection fails
+        if (!getenv('AWS_ACCESS_KEY_ID') || !getenv('AWS_SECRET_ACCESS_KEY')) {
+            $this->markTestSkipped('AWS credentials not configured. Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to run feature tests.');
+        }
+    }
+
     /**
      * Writing of Multi-measure attributes
      */
